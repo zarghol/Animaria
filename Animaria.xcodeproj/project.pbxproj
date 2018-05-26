@@ -15,6 +15,15 @@
 		18715A1D20B892B900059D0D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18715A1C20B892B900059D0D /* Assets.xcassets */; };
 		18715A2020B892B900059D0D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 18715A1E20B892B900059D0D /* Main.storyboard */; };
 		18715A2C20B892B900059D0D /* AnimariaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A2B20B892B900059D0D /* AnimariaTests.swift */; };
+		18715A3720B8968600059D0D /* Skill.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A3620B8968600059D0D /* Skill.swift */; };
+		18715A3920B8986800059D0D /* FileLoadable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A3820B8986800059D0D /* FileLoadable.swift */; };
+		18715A3B20B89AEF00059D0D /* Int+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A3A20B89AEF00059D0D /* Int+Random.swift */; };
+		18715A3D20B89FED00059D0D /* Object.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A3C20B89FED00059D0D /* Object.swift */; };
+		18715A3F20B8A24F00059D0D /* Resource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A3E20B8A24F00059D0D /* Resource.swift */; };
+		18715A4120B8E04200059D0D /* TextureComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A4020B8E04200059D0D /* TextureComponent.swift */; };
+		18715A4320B8E30D00059D0D /* Character.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A4220B8E30D00059D0D /* Character.swift */; };
+		18715A4520B973E100059D0D /* MapTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18715A4420B973E100059D0D /* MapTileSet.sks */; };
+		18715A4720B976DD00059D0D /* LegacyTileSet.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18715A4620B976DD00059D0D /* LegacyTileSet.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +50,15 @@
 		18715A2720B892B900059D0D /* AnimariaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnimariaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		18715A2B20B892B900059D0D /* AnimariaTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnimariaTests.swift; sourceTree = "<group>"; };
 		18715A2D20B892B900059D0D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		18715A3620B8968600059D0D /* Skill.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skill.swift; sourceTree = "<group>"; };
+		18715A3820B8986800059D0D /* FileLoadable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileLoadable.swift; sourceTree = "<group>"; };
+		18715A3A20B89AEF00059D0D /* Int+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Int+Random.swift"; sourceTree = "<group>"; };
+		18715A3C20B89FED00059D0D /* Object.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Object.swift; sourceTree = "<group>"; };
+		18715A3E20B8A24F00059D0D /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		18715A4020B8E04200059D0D /* TextureComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureComponent.swift; sourceTree = "<group>"; };
+		18715A4220B8E30D00059D0D /* Character.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Character.swift; sourceTree = "<group>"; };
+		18715A4420B973E100059D0D /* MapTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = MapTileSet.sks; sourceTree = "<group>"; };
+		18715A4620B976DD00059D0D /* LegacyTileSet.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = LegacyTileSet.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,10 +105,19 @@
 				18715A1620B892B800059D0D /* Actions.sks */,
 				18715A1820B892B800059D0D /* GameScene.swift */,
 				18715A1A20B892B800059D0D /* ViewController.swift */,
+				18715A3620B8968600059D0D /* Skill.swift */,
+				18715A4220B8E30D00059D0D /* Character.swift */,
+				18715A3C20B89FED00059D0D /* Object.swift */,
+				18715A4020B8E04200059D0D /* TextureComponent.swift */,
+				18715A3E20B8A24F00059D0D /* Resource.swift */,
+				18715A3820B8986800059D0D /* FileLoadable.swift */,
+				18715A3A20B89AEF00059D0D /* Int+Random.swift */,
 				18715A1C20B892B900059D0D /* Assets.xcassets */,
 				18715A1E20B892B900059D0D /* Main.storyboard */,
 				18715A2120B892B900059D0D /* Info.plist */,
 				18715A2220B892B900059D0D /* Animaria.entitlements */,
+				18715A4420B973E100059D0D /* MapTileSet.sks */,
+				18715A4620B976DD00059D0D /* LegacyTileSet.sks */,
 			);
 			path = Animaria;
 			sourceTree = "<group>";
@@ -186,7 +213,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				18715A1520B892B800059D0D /* GameScene.sks in Resources */,
+				18715A4520B973E100059D0D /* MapTileSet.sks in Resources */,
 				18715A1D20B892B900059D0D /* Assets.xcassets in Resources */,
+				18715A4720B976DD00059D0D /* LegacyTileSet.sks in Resources */,
 				18715A1720B892B800059D0D /* Actions.sks in Resources */,
 				18715A2020B892B900059D0D /* Main.storyboard in Resources */,
 			);
@@ -207,8 +236,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				18715A1B20B892B800059D0D /* ViewController.swift in Sources */,
+				18715A3F20B8A24F00059D0D /* Resource.swift in Sources */,
+				18715A3720B8968600059D0D /* Skill.swift in Sources */,
 				18715A1920B892B800059D0D /* GameScene.swift in Sources */,
+				18715A3D20B89FED00059D0D /* Object.swift in Sources */,
 				18715A1320B892B800059D0D /* AppDelegate.swift in Sources */,
+				18715A3B20B89AEF00059D0D /* Int+Random.swift in Sources */,
+				18715A4320B8E30D00059D0D /* Character.swift in Sources */,
+				18715A3920B8986800059D0D /* FileLoadable.swift in Sources */,
+				18715A4120B8E04200059D0D /* TextureComponent.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
