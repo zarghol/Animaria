@@ -49,6 +49,8 @@ class GameScene: SKScene {
                     sprite.position = startPosition
                 }
                 self.entityManager.insert(building)
+                
+//                pandas.availableSkills
             }
         } catch {
             print(error)

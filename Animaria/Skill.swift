@@ -8,30 +8,92 @@
 
 import Foundation
 
-enum SkillType {
+enum SkillType: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case type, characteristics, requiredToBuild
+    }
+    
     case direct([Characteristic: Double])
     case duration([Characteristic: Double])
     case building([Resource: Int]) // ??
+    case basic
+    
+    init(from decoder: Decoder) throws {
+        if let singleContainer = try? decoder.singleValueContainer(),
+           let typeString = try? singleContainer.decode(String.self) {
+            switch typeString {
+            case "basic":
+                self = .basic
+                return
+            default:
+                throw DecodingError.valueNotFound(SkillType.self, DecodingError.Context(codingPath: [CodingKeys.type], debugDescription: "unknown value for this key : \(typeString)"))
+            }
+        } else {
+            let innerContainer = try decoder.container(keyedBy: CodingKeys.self)
+            let typeString = try innerContainer.decode(String.self, forKey: .type)
+            switch typeString {
+            case "direct":
+                let characteristics: [Characteristic: Double] = try innerContainer.decode([String: Double].self, forKey: .characteristics).map { tuple in
+                    if let charac = Characteristic(rawValue: tuple.key) {
+                        return (charac, tuple.value)
+                    } else {
+                        throw DecodingError.valueNotFound(
+                            Characteristic.self,
+                            DecodingError.Context(codingPath: [SkillType.CodingKeys.characteristics], debugDescription: "unable to build an enum value with value provided : \(tuple.key)")
+                        )
+                    }
+                }
+                self = .direct(characteristics)
+                return
+            case "duration":
+                let characteristics: [Characteristic: Double] = try innerContainer.decode([String: Double].self, forKey: .characteristics).map { tuple in
+                    if let charac = Characteristic(rawValue: tuple.key) {
+                        return (charac, tuple.value)
+                    } else {
+                        throw DecodingError.valueNotFound(
+                            Characteristic.self,
+                            DecodingError.Context(codingPath: [SkillType.CodingKeys.characteristics], debugDescription: "unable to build an enum value with value provided : \(tuple.key)")
+                        )
+                    }
+                }
+                self = .duration(characteristics)
+                return
+            case "building":
+                let resources: [Resource: Int] = try innerContainer.decode([String: Int].self, forKey: .requiredToBuild).map { tuple in
+                    if let charac = Resource(rawValue: tuple.key) {
+                        return (charac, tuple.value)
+                    } else {
+                        throw DecodingError.valueNotFound(
+                            Resource.self,
+                            DecodingError.Context(codingPath: [SkillType.CodingKeys.requiredToBuild], debugDescription: "unable to build an enum value with value provided : \(tuple.key)")
+                        )
+                    }
+                }
+                self = .building(resources)
+                return
+            default:
+                throw DecodingError.valueNotFound(SkillType.self, DecodingError.Context(codingPath: [CodingKeys.type], debugDescription: "unknown value for this key : \(typeString)"))
+            }
+        }
+    }
 }
 
 typealias SkillId = String
 
-struct SkillTemplate {
+struct SkillTemplate: Decodable {
     let id: SkillId
     let name: String
     let description: String
     
     let type: SkillType
-    let requiredTitle: String
+    let requiredTitle: TitleId?
     let energyQuantity: Double
-    let range: Double
-    let size: Double
     let cooldown: Double
 }
 
 import GameplayKit
 
-class Skill: GKComponent { // Entity ???
+class Skill { 
     let template: SkillTemplate
     var level: Int
     var experience: Int
@@ -42,12 +104,6 @@ class Skill: GKComponent { // Entity ???
         self.template = template
         self.experience = experience
         self.currentTime = currentTime
-        
-        super.init()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     func earnExperience() { // Experience component ???

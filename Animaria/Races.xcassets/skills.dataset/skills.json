@@ -1,0 +1,26 @@
+[
+  {
+    "id": "base_0",
+    "name": "stop",
+    "description": "arrête l'action en cours.",
+    "type": "basic",
+    "requiredTitle": null,
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
+  },
+  {
+    "id": "base_1",
+    "name": "attaque",
+    "description": "attaque la cible.",
+    "type": {
+      "type": "direct",
+      "characteristics": {
+        "damages": 3.0,
+        "range": 1.0
+      }
+    },
+    "requiredTitle": null,
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
+  }
+]

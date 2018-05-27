@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		18089B0620BA4F210033D12A /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18089B0520BA4F210033D12A /* Title.swift */; };
+		18089B0820BA52600033D12A /* SkillBookComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18089B0720BA52600033D12A /* SkillBookComponent.swift */; };
 		182DF2E620BA2FD700B8B322 /* CampComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182DF2E520BA2FD700B8B322 /* CampComponent.swift */; };
 		182DF2E820BA309500B8B322 /* MainEntityComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182DF2E720BA309500B8B322 /* MainEntityComponent.swift */; };
 		182DF2EA20BA31F200B8B322 /* EntityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 182DF2E920BA31F200B8B322 /* EntityManager.swift */; };
@@ -50,6 +52,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		18089B0520BA4F210033D12A /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
+		18089B0720BA52600033D12A /* SkillBookComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillBookComponent.swift; sourceTree = "<group>"; };
 		182DF2E520BA2FD700B8B322 /* CampComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CampComponent.swift; sourceTree = "<group>"; };
 		182DF2E720BA309500B8B322 /* MainEntityComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainEntityComponent.swift; sourceTree = "<group>"; };
 		182DF2E920BA31F200B8B322 /* EntityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityManager.swift; sourceTree = "<group>"; };
@@ -135,6 +139,7 @@
 				18715A1A20B892B800059D0D /* ViewController.swift */,
 				18715A3E20B8A24F00059D0D /* Resource.swift */,
 				18715A3620B8968600059D0D /* Skill.swift */,
+				18089B0520BA4F210033D12A /* Title.swift */,
 				18BA455420B9F95000E56E6F /* Template.swift */,
 				18BA455820B9FF3900E56E6F /* Race.swift */,
 				18BA454F20B9DB3800E56E6F /* Entities */,
@@ -171,6 +176,7 @@
 				182DF2E520BA2FD700B8B322 /* CampComponent.swift */,
 				182DF2E720BA309500B8B322 /* MainEntityComponent.swift */,
 				182DF2EB20BA372600B8B322 /* StartPositionComponent.swift */,
+				18089B0720BA52600033D12A /* SkillBookComponent.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -294,11 +300,13 @@
 			files = (
 				18BA454820B9B7BD00E56E6F /* NamingComponent.swift in Sources */,
 				18715A1B20B892B800059D0D /* ViewController.swift in Sources */,
+				18089B0620BA4F210033D12A /* Title.swift in Sources */,
 				18715A3F20B8A24F00059D0D /* Resource.swift in Sources */,
 				18715A3720B8968600059D0D /* Skill.swift in Sources */,
 				18BA455920B9FF3900E56E6F /* Race.swift in Sources */,
 				18715A1920B892B800059D0D /* GameScene.swift in Sources */,
 				18BA455520B9F95000E56E6F /* Template.swift in Sources */,
+				18089B0820BA52600033D12A /* SkillBookComponent.swift in Sources */,
 				18BA454E20B9D33F00E56E6F /* GameInterfaceBar.swift in Sources */,
 				18715A3D20B89FED00059D0D /* Object.swift in Sources */,
 				18715A1320B892B800059D0D /* AppDelegate.swift in Sources */,

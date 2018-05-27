@@ -1,0 +1,14 @@
+[
+  {
+    "id": "panda_0",
+    "name": "panda",
+    "description": "Produit un panda",
+    "type": {
+      "type": "building",
+      "requiredToBuild": { }
+    },
+    "requiredTitle": null,
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
+  }
+]

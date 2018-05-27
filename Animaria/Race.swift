@@ -23,6 +23,7 @@ struct LoadedRace {
     let availableBuildings: [BuildingTemplate]
     let availableCharacters: [CharacterTemplate]
     let buildableObjects: [ObjectTemplate]
+    let availableSkills: [SkillTemplate]
 }
 
 extension LoadedRace {
@@ -30,15 +31,17 @@ extension LoadedRace {
         let buildingsData = try provider.getData(for: race, type: .buildings)
         let charactersData = try provider.getData(for: race, type: .characters)
         let objectsData = try provider.getData(for: race, type: .objects)
+        let skillsData = try provider.getData(for: race, type: .skills)
         
         self.availableBuildings = try LoadedRace.jsonDecoder.decode([BuildingTemplate].self, from: buildingsData)
         self.availableCharacters = try LoadedRace.jsonDecoder.decode([CharacterTemplate].self, from: charactersData)
         self.buildableObjects = try LoadedRace.jsonDecoder.decode([ObjectTemplate].self, from: objectsData)
+        self.availableSkills =  try LoadedRace.jsonDecoder.decode([SkillTemplate].self, from: skillsData)
     }
 }
 
 enum RaceDataType: String {
-    case buildings, characters, objects
+    case buildings, characters, objects, skills
 }
 
 protocol RaceProvider {
