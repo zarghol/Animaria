@@ -1,0 +1,17 @@
+[
+  {
+    "name": "épée",
+    "description": "une épée à simple tranchant en acier.",
+    "characteristics": {
+      "damages": 5.0,
+      "range": 1.0,
+      "attackSpeed": 1.0
+    },
+    "type": "weapon",
+    "location": "hand",
+    "requiredToBuild": {
+      "time": 50.0,
+      "metal": 5.0
+    }
+  }
+]

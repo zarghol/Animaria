@@ -13,34 +13,41 @@ import GameplayKit
 class ViewController: NSViewController {
 
     @IBOutlet var skView: SKView!
+    var entityManager: EntityManager!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
-        if let scene = GKScene(fileNamed: "GameScene") {
+        // Get the SKScene from the loaded GKScene
+        guard let scene = GKScene(fileNamed: "GameScene"),
+              let sceneNode = scene.rootNode as! GameScene? else {
+            return
+        }
+        let startPositions = scene.entities
+            .filter { $0.component(ofType: StartPositionComponent.self) != nil }
+            .compactMap { $0.component(ofType: GKSKNodeComponent.self)?.node.position }
+        self.entityManager = EntityManager(scene: sceneNode)
+        sceneNode.entityManager = self.entityManager
+        sceneNode.startPositions = startPositions
+        // Copy gameplay related content over to the scene
+        //                sceneNode.entities = scene.entities
+        //                sceneNode.graphs = scene.graphs
+        //
+        // Set the scale mode to scale to fit the window
+        sceneNode.scaleMode = .aspectFill
+        
+        // TODO: Bind GameScene, selected object to Interface
+        
+        // Present the scene
+        if let view = self.skView {
+            view.presentScene(sceneNode)
             
-            // Get the SKScene from the loaded GKScene
-            if let sceneNode = scene.rootNode as! GameScene? {
-                
-                // Copy gameplay related content over to the scene
-//                sceneNode.entities = scene.entities
-//                sceneNode.graphs = scene.graphs
-//                
-                // Set the scale mode to scale to fit the window
-                sceneNode.scaleMode = .aspectFill
-                
-                // Present the scene
-                if let view = self.skView {
-                    view.presentScene(sceneNode)
-                    
-                    view.ignoresSiblingOrder = true
-                    
-                    view.showsFPS = true
-                    view.showsNodeCount = true
-                }
-            }
+            view.ignoresSiblingOrder = true
+            
+            view.showsFPS = true
+            view.showsNodeCount = true
         }
     }
     
@@ -79,11 +86,14 @@ extension ViewController: NSTouchBarDelegate {
     }
     
     func touchBar(_ touchBar: NSTouchBar, makeItemForIdentifier identifier: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
+        guard let scene = self.skView.scene else {
+            return nil
+        }
         switch identifier {
         case .positionLabel:
             let customViewItem = NSCustomTouchBarItem(identifier: identifier)
             customViewItem.view = NSTextField(labelWithString: "Debug Label")
-            customViewItem.view.bind(NSBindingName(rawValue: "stringValue"), to: self.skView.scene, withKeyPath: #keyPath(GameScene.debugText), options: nil)
+            customViewItem.view.bind(NSBindingName(rawValue: "stringValue"), to: scene, withKeyPath: #keyPath(GameScene.debugText), options: nil)
             return customViewItem
         default:
             return nil

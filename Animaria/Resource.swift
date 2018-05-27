@@ -8,6 +8,8 @@
 
 import Foundation
 
-enum Resource {
-    case crystal, time
+enum Resource: String {
+    case crystal, metal, wood, time
 }
+
+extension Resource: Decodable, Encodable { }

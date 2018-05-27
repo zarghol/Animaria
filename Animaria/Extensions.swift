@@ -28,3 +28,33 @@ extension Int {
         return source.nextInt(upperBound: interval) + range.lowerBound
     }
 }
+
+extension Array {
+    var randomValue: Element? {
+        guard self.count > 0 else {
+            return nil
+        }
+        return self[Int.random(in: 0..<self.count)]
+    }
+}
+
+extension SKView {
+    open override func scrollWheel(with event: NSEvent) {
+        self.scene?.scrollWheel(with: event)
+    }
+}
+
+extension CGVector {
+    static func * (left: CGVector, right: CGFloat) -> CGVector {
+        var newVector = left
+        newVector.dx *= right
+        newVector.dy *= right
+        return newVector
+    }
+}
+
+extension CGFloat {
+    func contained(in range: Range<CGFloat>) -> CGFloat {
+        return CGFloat.maximum(CGFloat.minimum(self, range.upperBound), range.lowerBound)
+    }
+}

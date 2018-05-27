@@ -14,7 +14,10 @@ enum SkillType {
     case building([Resource: Int]) // ??
 }
 
+typealias SkillId = String
+
 struct SkillTemplate {
+    let id: SkillId
     let name: String
     let description: String
     
@@ -57,11 +60,5 @@ class Skill: GKComponent { // Entity ???
             experience = (experience + randomXP) % cap
             level += 1
         }
-    }
-}
-
-extension SkillTemplate: FileLoadable {
-    func load(fileName: String) throws {
-        throw FileError.unknownError
     }
 }
