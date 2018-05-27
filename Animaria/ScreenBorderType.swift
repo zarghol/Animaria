@@ -32,24 +32,68 @@ enum ScreenBorderType {
         }
     }
     
-    func cameraCanMove(cameraFrame: CGRect, mapSize: CGSize, uiHeight: CGFloat) -> Bool {
+    func directionAvailable(cameraFrame: CGRect, mapSize: CGSize, uiHeight: CGFloat) -> CGVector? {
         switch self {
         case .up:
-            return cameraFrame.maxY < mapSize.height
+            return cameraFrame.maxY < mapSize.height ? self.direction : nil
         case .down:
-            return cameraFrame.minY > -1 * uiHeight
+            return cameraFrame.minY > -1 * uiHeight ? self.direction : nil
         case .left:
-            return cameraFrame.minX > 0
+            return cameraFrame.minX > 0 ? self.direction : nil
         case .right:
-            return cameraFrame.maxX < mapSize.width
+            return cameraFrame.maxX < mapSize.width ? self.direction : nil
         case .upLeft:
-            return cameraFrame.maxY < mapSize.height && cameraFrame.minX > 0
+            let upComposant = cameraFrame.maxY < mapSize.height
+            let leftComposant = cameraFrame.minX > 0
+            switch (leftComposant, upComposant) {
+            case (true, true):
+                return self.direction
+            case (true, false):
+                return ScreenBorderType.left.direction
+            case (false, true):
+                return ScreenBorderType.up.direction
+            case (false, false):
+                return nil
+            }
         case .upRight:
-            return cameraFrame.maxY < mapSize.height && cameraFrame.maxX < mapSize.width
+            let rightComposant = cameraFrame.maxX < mapSize.width
+            let upComposant = cameraFrame.maxY < mapSize.height
+            switch (rightComposant, upComposant) {
+            case (true, true):
+                return self.direction
+            case (true, false):
+                return ScreenBorderType.right.direction
+            case (false, true):
+                return ScreenBorderType.up.direction
+            case (false, false):
+                return nil
+            }
         case .downLeft:
-            return cameraFrame.minY > -1 * uiHeight && cameraFrame.minX > 0
+            let leftComposant = cameraFrame.minX > 0
+            let downComposant = cameraFrame.minY > -1 * uiHeight
+            switch (leftComposant, downComposant) {
+            case (true, true):
+                return self.direction
+            case (true, false):
+                return ScreenBorderType.left.direction
+            case (false, true):
+                return ScreenBorderType.down.direction
+            case (false, false):
+                return nil
+            }
         case .downRight:
-            return cameraFrame.minY > -1 * uiHeight && cameraFrame.maxX < mapSize.width
+            let rightComposant = cameraFrame.maxX < mapSize.width
+            let downComposant = cameraFrame.minY > -1 * uiHeight
+            switch (rightComposant, downComposant) {
+            case (true, true):
+                return self.direction
+            case (true, false):
+                return ScreenBorderType.right.direction
+            case (false, true):
+                return ScreenBorderType.down.direction
+            case (false, false):
+                return nil
+            }
         }
     }
 }

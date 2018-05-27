@@ -198,7 +198,7 @@ class GameScene: SKScene {
                                        y: camera.position.y - cameraSize.height / 2)
             let cameraFrame = CGRect(origin: cameraOrigin, size: cameraSize)
             
-            guard border.cameraCanMove(cameraFrame: cameraFrame, mapSize: self.size, uiHeight: 120) else {
+            guard let direction = border.directionAvailable(cameraFrame: cameraFrame, mapSize: self.size, uiHeight: 120) else {
                 camera.removeAction(forKey: "moveCamera")
                 return
             }
@@ -206,7 +206,7 @@ class GameScene: SKScene {
             if let existingAction = camera.action(forKey: "moveCamera") {
                 existingAction.duration += 0.1
             } else {
-                let vector = border.direction * 60.0
+                let vector = direction * 60.0
                 let moveCamera = SKAction.move(by: vector, duration: 0.1)
                 camera.run(moveCamera, withKey: "moveCamera")
             }
