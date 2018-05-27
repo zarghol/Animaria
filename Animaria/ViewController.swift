@@ -13,6 +13,24 @@ import GameplayKit
 class ViewController: NSViewController {
 
     @IBOutlet var skView: SKView!
+    
+    // MARK: - Interface
+    
+    @IBOutlet weak var portraitView: NSImageView!
+    
+    @IBOutlet weak var lifeSlider: NSSlider!
+    @IBOutlet weak var energySlider: NSSlider!
+    
+    @IBOutlet weak var nameTextField: NSTextField!
+    @IBOutlet weak var descriptionTextField: NSTextField!
+    
+    @IBOutlet weak var skillsButton: NSButton!
+    @IBOutlet weak var inventoryButton: NSButton!
+    @IBOutlet weak var titlesButton: NSButton!
+    
+    
+    // MARK: -
+    
     var entityManager: EntityManager!
     
     override func viewDidLoad() {
@@ -38,8 +56,6 @@ class ViewController: NSViewController {
         // Set the scale mode to scale to fit the window
         sceneNode.scaleMode = .aspectFill
         
-        // TODO: Bind GameScene, selected object to Interface
-        
         // Present the scene
         if let view = self.skView {
             view.presentScene(sceneNode)
@@ -49,6 +65,39 @@ class ViewController: NSViewController {
             view.showsFPS = true
             view.showsNodeCount = true
         }
+        self.updateInterface()
+        NotificationCenter.default.addObserver(self, selector: #selector(updateInterface), name: GameScene.SelectedObjectNotificationName, object: sceneNode)
+    }
+    
+    @objc func updateInterface() {
+        guard let selectedEntity = (self.skView.scene as? GameScene)?.selectedObject else {
+            self.lifeSlider.isEnabled = false
+            self.energySlider.isEnabled = false
+            self.nameTextField.stringValue = "Aucune sélection"
+            self.descriptionTextField.stringValue = "Pas de description"
+            self.skillsButton.isHidden = true
+            self.inventoryButton.isHidden = true
+            self.titlesButton.isHidden = true
+            return
+        }
+        if let lifeComponent = selectedEntity.component(ofType: LifeComponent.self) {
+            self.lifeSlider.isEnabled = true
+            self.lifeSlider.maxValue = lifeComponent.maxLife
+            self.lifeSlider.doubleValue = lifeComponent.currentLife
+        }
+        
+        self.energySlider.isEnabled = false
+        
+        if let namingComponent = selectedEntity.component(ofType: NamingComponent.self) {
+            self.nameTextField.stringValue = namingComponent.name
+            self.descriptionTextField.stringValue = namingComponent.descriptionText
+        }
+        
+        self.skillsButton.isHidden = false
+        self.inventoryButton.isHidden = false
+        self.titlesButton.isHidden = false
+        
+        
     }
     
     override func viewDidAppear() {

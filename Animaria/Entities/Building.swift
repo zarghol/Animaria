@@ -55,7 +55,7 @@ class Building: TempletableEntity<BuildingTemplate> {
     init(template: BuildingTemplate, camp: Int, isMain: Bool) {
         super.init(template: template)
         
-        self.addComponent(NamingComponent(name: template.name, description: description))
+        self.addComponent(NamingComponent(name: template.name, description: template.description))
         let texture = SKTexture(imageNamed: "\(template.name)")
         self.addComponent(TextureComponent(texture: texture, size: texture.size()))
         self.addComponent(LifeComponent(maxLife: template.maxLife))

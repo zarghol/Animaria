@@ -9,9 +9,8 @@
 import SpriteKit
 import GameplayKit
 
-protocol SelectableObject { }
-
 class GameScene: SKScene {
+    static let SelectedObjectNotificationName = NSNotification.Name("selectedObject")
     
     @objc var debugText: String = "Debug Label" {
         willSet {
@@ -29,7 +28,11 @@ class GameScene: SKScene {
     
     var trackingArea = [NSTrackingArea]()
     
-    var selectedObject: SelectableObject?
+    var selectedObject: GKEntity? {
+        didSet {
+            NotificationCenter.default.post(name: GameScene.SelectedObjectNotificationName, object: self)
+        }
+    }
     
     weak var entityManager: EntityManager!
     var startPositions = [CGPoint]()
@@ -80,7 +83,23 @@ class GameScene: SKScene {
             .down: NSRect(x: thresholdSize,
                         y: 0,
                         width: view.bounds.size.width - 2 * thresholdSize,
-                        height: thresholdSize)
+                        height: thresholdSize),
+            .upLeft: NSRect(x: 0,
+                            y: view.bounds.size.height - thresholdSize,
+                            width: thresholdSize,
+                            height: thresholdSize),
+            .upRight: NSRect(x: view.bounds.size.width - thresholdSize,
+                            y: view.bounds.size.height - thresholdSize,
+                            width: thresholdSize,
+                            height: thresholdSize),
+            .downLeft: NSRect(x: 0,
+                            y: 0,
+                            width: thresholdSize,
+                            height: thresholdSize),
+            .downRight: NSRect(x: view.bounds.size.width - thresholdSize,
+                             y: 0,
+                             width: thresholdSize,
+                             height: thresholdSize)
         ]
         
         for (type, rect) in rects {
@@ -112,13 +131,18 @@ class GameScene: SKScene {
     
     override func mouseUp(with event: NSEvent) {
         guard event.locationInWindow.y > 120 else {
-            // click on the interface : mouse handled by buttons
+            // click on the interface : if the case, handled by buttons
             return
         }
-        let location = event.location(in: self)
-        self.debugText = "Mouse Up : \(event.locationInWindow) (x: \(location.x), y : \(location.y))"
-//        self.camera?.position = location
         
+        let location = event.location(in: self)
+        let nodes = self.nodes(at: location).filter { $0 is SKSpriteNode }
+        if let selectedEntity = nodes.first?.entity {
+            self.selectedObject = selectedEntity
+        } else {
+            self.selectedObject = nil
+            self.debugText = "empty location : (x: \(location.x), y : \(location.y))"
+        }
     }
     
     override func mouseMoved(with event: NSEvent) {

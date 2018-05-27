@@ -744,7 +744,6 @@
                                                 <constraint firstAttribute="width" constant="1" id="7SA-qo-yHL"/>
                                             </constraints>
                                             <color key="fillColor" name="controlDarkShadowColor" catalog="System" colorSpace="catalog"/>
-                                            <font key="titleFont" metaFont="message" size="11"/>
                                         </box>
                                         <box boxType="custom" cornerRadius="4" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="mhv-P4-7YP">
                                             <rect key="frame" x="8" y="8" width="102" height="102"/>
@@ -756,7 +755,6 @@
                                                 <constraint firstAttribute="width" secondItem="mhv-P4-7YP" secondAttribute="height" multiplier="1:1" id="9aY-fU-m4G"/>
                                             </constraints>
                                             <color key="fillColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <font key="titleFont" metaFont="message" size="11"/>
                                         </box>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rPK-6Y-V7q">
                                             <rect key="frame" x="304" y="74" width="156" height="24"/>
@@ -870,7 +868,6 @@
                                     <constraint firstAttribute="height" constant="120" id="EXr-dX-Cs6"/>
                                 </constraints>
                                 <color key="fillColor" white="0.75" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <font key="titleFont" metaFont="message" size="11"/>
                             </box>
                         </subviews>
                         <constraints>
@@ -881,7 +878,15 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="descriptionTextField" destination="hy2-8C-NX5" id="Od1-pg-H6c"/>
+                        <outlet property="energySlider" destination="GLb-yL-HPA" id="nFv-ad-pVE"/>
+                        <outlet property="inventoryButton" destination="hAs-A1-btC" id="Y1V-re-4UI"/>
+                        <outlet property="lifeSlider" destination="pTV-lk-qsJ" id="q6f-yd-bHq"/>
+                        <outlet property="nameTextField" destination="rPK-6Y-V7q" id="wbV-eH-4L0"/>
+                        <outlet property="portraitView" destination="zj3-l8-YKq" id="fGo-cw-lZl"/>
                         <outlet property="skView" destination="m2S-Jp-Qdl" id="qux-te-cT3"/>
+                        <outlet property="skillsButton" destination="p79-eY-Uhj" id="J6B-dS-Bq3"/>
+                        <outlet property="titlesButton" destination="OvL-uU-F28" id="vGs-Ec-aMl"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

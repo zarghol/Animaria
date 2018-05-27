@@ -17,6 +17,17 @@ class TextureComponent: GKComponent {
     init(texture: SKTexture, size: CGSize) {
         self.sprite = SKSpriteNode(texture: texture, size: size)
         super.init()
+        
+    }
+    
+    override func didAddToEntity() {
+        super.didAddToEntity()
+        self.sprite.entity = self.entity
+    }
+    
+    override func willRemoveFromEntity() {
+        super.willRemoveFromEntity()
+        self.sprite.entity = nil
     }
     
     required init?(coder aDecoder: NSCoder) {
