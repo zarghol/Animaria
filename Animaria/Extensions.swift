@@ -58,3 +58,20 @@ extension CGFloat {
         return CGFloat.maximum(CGFloat.minimum(self, range.upperBound), range.lowerBound)
     }
 }
+
+extension Dictionary {
+    func map<T: Hashable, U>(_ transform: ((key: Key, value: Value)) throws -> (T, U)) rethrows -> [T: U] {
+        var result = [T: U]()
+        for (key, value) in self {
+            let (newKey, newValue) = try transform((key, value))
+            result[newKey] = newValue
+        }
+        return result
+    }
+}
+
+extension Array {
+    func subset<Value: Equatable>(filterPath: KeyPath<Element, Value>, values: [Value]) -> [Element] {
+        return self.filter { values.contains($0[keyPath: filterPath]) }
+    }
+}

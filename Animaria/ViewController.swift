@@ -10,6 +10,26 @@ import Cocoa
 import SpriteKit
 import GameplayKit
 
+extension SkillBookComponent: NSCollectionViewDataSource {
+    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+        return section == 0 ? self.skills.count : 0
+    }
+    
+    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+        let skill = self.skills[indexPath.item]
+        
+        let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SkillCell"), for: indexPath)
+        
+        guard let cell = item as? SkillCell else {
+            return item
+        }
+        let image = NSImage(named: NSImage.Name(rawValue: skill.template.id))
+        cell.image = image
+        
+        return cell
+    }
+}
+
 class ViewController: NSViewController {
 
     @IBOutlet var skView: SKView!
@@ -24,10 +44,10 @@ class ViewController: NSViewController {
     @IBOutlet weak var nameTextField: NSTextField!
     @IBOutlet weak var descriptionTextField: NSTextField!
     
-    @IBOutlet weak var skillsButton: NSButton!
+    @IBOutlet weak var skillsFilterSegmentedControl: NSSegmentedControl!
+    @IBOutlet weak var skillsCollectionView: NSCollectionView!
     @IBOutlet weak var inventoryButton: NSButton!
     @IBOutlet weak var titlesButton: NSButton!
-    
     
     // MARK: -
     
@@ -35,6 +55,7 @@ class ViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
@@ -66,6 +87,7 @@ class ViewController: NSViewController {
             view.showsNodeCount = true
         }
         self.updateInterface()
+        
         NotificationCenter.default.addObserver(self, selector: #selector(updateInterface), name: GameScene.SelectedObjectNotificationName, object: sceneNode)
     }
     
@@ -75,9 +97,10 @@ class ViewController: NSViewController {
             self.energySlider.isEnabled = false
             self.nameTextField.stringValue = "Aucune sélection"
             self.descriptionTextField.stringValue = "Pas de description"
-            self.skillsButton.isHidden = true
             self.inventoryButton.isHidden = true
             self.titlesButton.isHidden = true
+            self.skillsCollectionView.dataSource = nil
+            self.skillsCollectionView.reloadData()
             return
         }
         if let lifeComponent = selectedEntity.component(ofType: LifeComponent.self) {
@@ -93,7 +116,14 @@ class ViewController: NSViewController {
             self.descriptionTextField.stringValue = namingComponent.descriptionText
         }
         
-        self.skillsButton.isHidden = false
+        if let skillsComponents = selectedEntity.component(ofType: SkillBookComponent.self) {
+            self.skillsCollectionView.dataSource = skillsComponents
+        } else {
+            self.skillsCollectionView.dataSource = nil
+            
+        }
+        self.skillsCollectionView.reloadData()
+        
         self.inventoryButton.isHidden = false
         self.titlesButton.isHidden = false
         
@@ -106,6 +136,17 @@ class ViewController: NSViewController {
             return
         }
         self.view.window?.delegate = scene
+    }
+}
+
+extension ViewController: NSCollectionViewDelegate {
+    func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        guard let first = indexPaths.first, let item = collectionView.item(at: first) as? SkillCell else {
+            return
+        }
+        let image = item.image
+        let view = item.imageView
+        print(view?.image ?? "no displayed image")
     }
 }
 

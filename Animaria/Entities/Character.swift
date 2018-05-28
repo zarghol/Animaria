@@ -20,9 +20,14 @@ struct CharacterTemplate: Encodable {
 
 extension CharacterTemplate: Template {
     init(from decoder: Decoder) throws {
+        guard let race = decoder.userInfo[Race.key] as? Race else {
+            throw DecodingError.valueNotFound(Race.self, DecodingError.Context(codingPath: [], debugDescription: "race not found in the decoder's userInfo"))
+        }
+        
         let container = try decoder.container(keyedBy: CharacterTemplate.CodingKeys.self)
         
         self.name = try container.decode(String.self, forKey: .name)
+        
 //        self.description = try container.decode(String.self, forKey: .description)
         self.maxLife = try container.decode(Double.self, forKey: .maxLife)
         self.maxEnergy = try container.decode(Double.self, forKey: .maxEnergy)
@@ -36,7 +41,7 @@ extension CharacterTemplate: Template {
             }
             return (key, tuple.value)
         }
-        self.race = try container.decode(Race.self, forKey: .race)
+        self.race = race
         let requiredToBuildDictionary = try container.decode([String: Int].self, forKey: .requiredToBuild)
         self.requiredToBuild = try requiredToBuildDictionary.map { tuple in
             guard let key = Resource(rawValue: tuple.key) else {

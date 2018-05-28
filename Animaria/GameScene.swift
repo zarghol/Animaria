@@ -37,26 +37,18 @@ class GameScene: SKScene {
     weak var entityManager: EntityManager!
     var startPositions = [CGPoint]()
     
-    
     func initializeGame() {
-        do {
-            let pandas = try LoadedRace(race: .panda, provider: XCAssetRaceProvider.self)
-            if let mainBuilding = pandas.availableBuildings.first {
-                let building = Building(template: mainBuilding, camp: 0, isMain: true)
-                
-                if let sprite = building.component(ofType: TextureComponent.self)?.sprite {
-                    let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
-                    sprite.position = startPosition
-                }
-                self.entityManager.insert(building)
-                
-//                pandas.availableSkills
+        if let mainBuilding = RaceRepository.all[.panda]?.availableBuildings.first {
+            let building = Building(template: mainBuilding, camp: 0, isMain: true)
+            
+            if let sprite = building.component(ofType: TextureComponent.self)?.sprite {
+                let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
+                sprite.position = startPosition
             }
-        } catch {
-            print(error)
+            self.entityManager.insert(building)            
         }
     }
-    
+
 //    override func sceneDidLoad() {
 //        super.sceneDidLoad()
 //        
@@ -113,7 +105,9 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
+        
         self.initializeGame()
+//        self.camera?.setScale(0.5)
         self.updateBorderTracking(on: view)
     }
     
@@ -122,28 +116,20 @@ class GameScene: SKScene {
         guard let camera = self.camera else {
             return
         }
-        let scale = event.scrollingDeltaY / 10.0
-        camera.xScale += scale
-        camera.yScale += scale
-        
-        camera.xScale = camera.xScale.contained(in: 0.1..<1)
-        camera.yScale = camera.yScale.contained(in: 0.1..<1)
-//        self.debugText = "\(self.camera?.yScale)"
+
+        let scale = camera.yScale + event.scrollingDeltaY / 10.0
+        self.camera?.setScale(scale.contained(in: 0.2..<1))
+        self.debugText = "\(self.camera?.yScale)"
     }
     
     override func mouseUp(with event: NSEvent) {
-        guard event.locationInWindow.y > 120 else {
-            // click on the interface : if the case, handled by buttons
-            return
-        }
-        
         let location = event.location(in: self)
         let nodes = self.nodes(at: location).filter { $0 is SKSpriteNode }
         if let selectedEntity = nodes.first?.entity {
             self.selectedObject = selectedEntity
         } else {
             self.selectedObject = nil
-            self.debugText = "empty location : (x: \(location.x), y : \(location.y))"
+            self.debugText = "empty location : \(event.locationInWindow) (x: \(location.x), y : \(location.y))"
         }
     }
     
@@ -159,11 +145,11 @@ class GameScene: SKScene {
         }
         
         self.moveBorder = borderType
-//        self.debugText = "borderType : \(borderType)"
+        self.debugText = "borderType : \(borderType)"
     }
     
     override func mouseExited(with event: NSEvent) {
-//        self.debugText = "mouseExited"
+        self.debugText = "mouseExited"
         self.moveBorder = nil
     }
     
@@ -188,19 +174,28 @@ class GameScene: SKScene {
     }
     
     func updateCameraPosition() {
-        guard let camera = self.camera else {
+        guard let camera = self.camera, let view = self.view else {
             return
         }
 //        self.debugText = "camera.position = \(camera.position)"
         if let border = self.moveBorder {
             // si la camera touche le bord selon la border, on bouge aps
-            let cameraSize = CGSize(width: camera.xScale * self.size.width,
-                                    height: camera.yScale * self.size.height)
-            let cameraOrigin = CGPoint(x: camera.position.x - cameraSize.width / 2,
-                                       y: camera.position.y - cameraSize.height / 2)
-            let cameraFrame = CGRect(origin: cameraOrigin, size: cameraSize)
+            let cameraWidth = camera.xScale * self.size.width
+            let cameraHeight = cameraWidth * view.frame.size.height / view.frame.size.width
+
+            let cameraFrame = CGRect(
+                x: camera.position.x - cameraWidth / 2,
+                y: camera.position.y - cameraHeight / 2,
+                width: cameraWidth,
+                height: cameraHeight
+            )
             
-            guard let direction = border.directionAvailable(cameraFrame: cameraFrame, mapSize: self.size, uiHeight: 120) else {
+            // cameraHeight ==> view.frame.size.height
+            // x ===> 200.0
+            
+            let uiHeight = 200.0 * cameraHeight / view.frame.size.height
+//            self.debugText = "\(cameraFrame)"
+            guard let direction = border.directionAvailable(cameraFrame: cameraFrame, mapSize: self.size, uiHeight: uiHeight) else {
                 camera.removeAction(forKey: "moveCamera")
                 return
             }

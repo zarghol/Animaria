@@ -8,6 +8,20 @@
 
 import Foundation
 
+//class SkillBook {
+//    private static let baseSkills: [SkillTemplate] = {
+//        do {
+//            let skillsData = try XCAssetProvider.getBaseData(type: .skills)
+//            return try JSONDecoder().decode([SkillTemplate].self, from: skillsData)
+//        } catch {
+//            print("unable to get the baseSkills : \(error)")
+//            return []
+//        }
+//    }()
+//    
+//    var availableSkills: [SkillTemplate]
+//}
+
 enum SkillType: Decodable {
     enum CodingKeys: String, CodingKey {
         case type, characteristics, requiredToBuild

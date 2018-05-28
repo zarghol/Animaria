@@ -9,10 +9,11 @@
 import Cocoa
 import GameplayKit
 
-struct BuildingTemplate: Encodable {
+struct BuildingTemplate: Encodable /* Not used, just to synthesize the CodingKeys */ {
     let name: String
     let description: String
     
+    let race: Race
     let maxLife: Double
     let characteristics: [Characteristic: Double]
     let requiredToBuild: [Resource: Int]
@@ -22,10 +23,16 @@ struct BuildingTemplate: Encodable {
 
 extension BuildingTemplate: Template {
     init(from decoder: Decoder) throws {
+        guard let race = decoder.userInfo[Race.key] as? Race else {
+            throw DecodingError.valueNotFound(Race.self, DecodingError.Context(codingPath: [], debugDescription: "race not found in the decoder's userInfo"))
+        }
+
         let container = try decoder.container(keyedBy: BuildingTemplate.CodingKeys.self)
-        
+
         self.name = try container.decode(String.self, forKey: .name)
         self.description = try container.decode(String.self, forKey: .description)
+
+        self.race = race
         self.maxLife = try container.decode(Double.self, forKey: .maxLife)
         let characteristicsDictionary = try container.decode([String: Double].self, forKey: .characteristics)
         self.characteristics = try characteristicsDictionary.map { tuple in
@@ -56,10 +63,14 @@ class Building: TempletableEntity<BuildingTemplate> {
         super.init(template: template)
         
         self.addComponent(NamingComponent(name: template.name, description: template.description))
-        let texture = SKTexture(imageNamed: "\(template.name)")
+        let texture = SKTexture(imageNamed: "\(template.race)/\(template.name)")
         self.addComponent(TextureComponent(texture: texture, size: texture.size()))
         self.addComponent(LifeComponent(maxLife: template.maxLife))
         self.addComponent(CampComponent(camp: camp))
+        
+        let buildingsSkills = RaceRepository.all.skills(for: template.race)
+        
+        self.addComponent(SkillBookComponent(templates: buildingsSkills.subset(filterPath: \SkillTemplate.id, values: template.skillsIds)))
         if isMain {
             self.addComponent(MainEntityComponent())
         }
@@ -67,16 +78,5 @@ class Building: TempletableEntity<BuildingTemplate> {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-}
-
-extension Dictionary {
-    func map<T: Hashable, U>(_ transform: ((key: Key, value: Value)) throws -> (T, U)) rethrows -> [T: U] {
-        var result = [T: U]()
-        for (key, value) in self {
-            let (newKey, newValue) = try transform((key, value))
-            result[newKey] = newValue
-        }
-        return result
     }
 }

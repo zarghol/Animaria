@@ -3,7 +3,6 @@
     "name": "panda",
     "maxLife": 3.0,
     "maxEnergy": 5.0,
-    "race": "panda",
     "characteristics": {
       "strength": 12,
       "intellect": 4,

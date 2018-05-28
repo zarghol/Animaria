@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="SkillCell" customModule="Animaria" customModuleProvider="target">
+            <connections>
+                <outlet property="view" destination="Hz6-mo-xeY" id="0bl-1N-x8E"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customView id="Hz6-mo-xeY">
+            <rect key="frame" x="0.0" y="0.0" width="51" height="60"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jTM-S5-xTc">
+                    <rect key="frame" x="0.0" y="0.0" width="51" height="60"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="Broigne cloutee" id="y32-AN-DRs"/>
+                </imageView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="jTM-S5-xTc" secondAttribute="trailing" id="GG2-aZ-VRo"/>
+                <constraint firstItem="jTM-S5-xTc" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="hSj-4t-tIE"/>
+                <constraint firstAttribute="bottom" secondItem="jTM-S5-xTc" secondAttribute="bottom" id="hTw-Xl-sCt"/>
+                <constraint firstItem="jTM-S5-xTc" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="owm-ka-Kdq"/>
+            </constraints>
+            <point key="canvasLocation" x="138.5" y="148"/>
+        </customView>
+        <collectionViewItem id="Fd8-u4-VEl" customClass="SkillCell" customModule="Animaria" customModuleProvider="target">
+            <connections>
+                <outlet property="imageView" destination="jTM-S5-xTc" id="ujL-Ef-rv2"/>
+                <outlet property="view" destination="Hz6-mo-xeY" id="XZl-ej-rnM"/>
+            </connections>
+        </collectionViewItem>
+    </objects>
+    <resources>
+        <image name="Broigne cloutee" width="51" height="60"/>
+    </resources>
+</document>
