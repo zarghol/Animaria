@@ -9,3 +9,11 @@
 import Foundation
 
 protocol Template: Decodable { }
+
+protocol UnitTemplate: Template {
+    var unitType: UnitType { get }
+}
+
+protocol BuildableTemplate: Template {
+    var requiredToBuild: [Resource: Int] { get }
+}

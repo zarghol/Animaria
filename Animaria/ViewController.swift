@@ -20,13 +20,13 @@ extension SkillBookComponent: NSCollectionViewDataSource {
         
         let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SkillCell"), for: indexPath)
         
-        guard let cell = item as? SkillCell else {
-            return item
-        }
-        let image = NSImage(named: NSImage.Name(rawValue: skill.template.id))
-        cell.image = image
+//        guard let cell = item as? SkillCell else {
+//            return item
+//        }
+        item.imageView?.image = NSImage(named: NSImage.Name(rawValue: skill.template.id.rawValue))
+//        cell.image = image
         
-        return cell
+        return item
     }
 }
 
@@ -35,6 +35,8 @@ class ViewController: NSViewController {
     @IBOutlet var skView: SKView!
     
     // MARK: - Interface
+
+    var uiObservations = [String: NSKeyValueObservation]()
     
     @IBOutlet weak var portraitView: NSImageView!
     
@@ -49,6 +51,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var inventoryButton: NSButton!
     @IBOutlet weak var titlesButton: NSButton!
     
+    @IBOutlet weak var buildingLabel: NSTextField!
+    @IBOutlet weak var buildingProgressIndicator: NSProgressIndicator!
     // MARK: -
     
     var entityManager: EntityManager!
@@ -101,6 +105,10 @@ class ViewController: NSViewController {
             self.titlesButton.isHidden = true
             self.skillsCollectionView.dataSource = nil
             self.skillsCollectionView.reloadData()
+            self.uiObservations.removeAll()
+            self.buildingLabel.isHidden = true
+            self.buildingProgressIndicator.isHidden = true
+            self.buildingProgressIndicator.doubleValue = 0.0
             return
         }
         if let lifeComponent = selectedEntity.component(ofType: LifeComponent.self) {
@@ -116,18 +124,42 @@ class ViewController: NSViewController {
             self.descriptionTextField.stringValue = namingComponent.descriptionText
         }
         
-        if let skillsComponents = selectedEntity.component(ofType: SkillBookComponent.self) {
-            self.skillsCollectionView.dataSource = skillsComponents
+        if let skillsComponent = selectedEntity.component(ofType: SkillBookComponent.self) {
+            self.skillsCollectionView.dataSource = skillsComponent
+
+            self.checkSkillProgressDisplayed(skillsComponent: skillsComponent)
         } else {
             self.skillsCollectionView.dataSource = nil
-            
+            self.uiObservations.removeAll()
+            self.buildingLabel.isHidden = true
+            self.buildingProgressIndicator.isHidden = true
+            self.buildingProgressIndicator.doubleValue = 0.0
         }
         self.skillsCollectionView.reloadData()
         
         self.inventoryButton.isHidden = false
         self.titlesButton.isHidden = false
-        
-        
+    }
+
+    func checkSkillProgressDisplayed(skillsComponent: SkillBookComponent) {
+        if let currentSkill = skillsComponent.currentSkill, currentSkill.progress < 1.0 {
+            self.buildingLabel.isHidden = false
+            self.buildingProgressIndicator.isHidden = false
+            let observation = currentSkill.observe(\Skill.progress) { (skill, _) in
+                self.buildingProgressIndicator.doubleValue = skill.progress
+                if skill.progress >= 1.0 {
+                    self.buildingLabel.isHidden = true
+                    self.buildingProgressIndicator.isHidden = true
+                    self.uiObservations["skill.progress"] = nil
+                }
+            }
+
+            uiObservations["skill.progress"] = observation
+        } else {
+            self.buildingLabel.isHidden = true
+            self.buildingProgressIndicator.isHidden = true
+            self.uiObservations["skill.progress"] = nil
+        }
     }
     
     override func viewDidAppear() {
@@ -141,12 +173,17 @@ class ViewController: NSViewController {
 
 extension ViewController: NSCollectionViewDelegate {
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
-        guard let first = indexPaths.first, let item = collectionView.item(at: first) as? SkillCell else {
-            return
+        guard let scene = self.skView.scene as? GameScene,
+            let selectedEntity = scene.selectedObject,
+            let skillsComponent = selectedEntity.component(ofType: SkillBookComponent.self),
+            let selectedIndexPath = indexPaths.first else {
+                return
         }
-        let image = item.image
-        let view = item.imageView
-        print(view?.image ?? "no displayed image")
+        let skill = skillsComponent.skills[selectedIndexPath.item]
+
+        skillsComponent.execute(skill)
+
+        self.checkSkillProgressDisplayed(skillsComponent: skillsComponent)
     }
 }
 
@@ -176,7 +213,7 @@ extension ViewController: NSTouchBarDelegate {
     }
     
     func touchBar(_ touchBar: NSTouchBar, makeItemForIdentifier identifier: NSTouchBarItem.Identifier) -> NSTouchBarItem? {
-        guard let scene = self.skView.scene else {
+        guard let scene = self.skView.scene as? GameScene else {
             return nil
         }
         switch identifier {
@@ -190,4 +227,12 @@ extension ViewController: NSTouchBarDelegate {
         }
     }
 }
+
+//extension NSObject {
+//    func bind<T, ValueType, V>(to destinationKeyPath: WritableKeyPath<V, ValueType>, with source: T, sourcePath: KeyPath<T, ValueType>) where V : NSObject {
+//        source.observe(sourcePath) { _, change in
+//            (self as? V)?[keyPath: destinationKeyPath] = source[keyPath: sourcePath]
+//        }
+//    }
+//}
 

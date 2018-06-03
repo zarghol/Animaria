@@ -42,6 +42,27 @@ extension LoadedRace {
     }
 }
 
+extension LoadedRace {
+    func getTemplate(unitType: UnitType, id: Int) -> Template? {
+        switch unitType {
+        case .building:
+            return self.availableBuildings.first { $0.id == id }
+        case .character:
+            return self.availableCharacters.first { $0.id == id }
+        case .object:
+            return self.buildableObjects.first { $0.id == id }
+        }
+    }
+
+    func getBuildableUnitTemplate(for skill: Skill) -> (UnitTemplate & BuildableTemplate)? {
+        guard case .building(let type, let id) = skill.template.type,
+              let template = self.getTemplate(unitType: type, id: id) as? UnitTemplate & BuildableTemplate else {
+                return nil
+        }
+        return template
+    }
+}
+
 struct RaceRepository {
     static let all = RaceRepository(races: Race.allCases, provider: XCAssetProvider.self)
     
@@ -79,34 +100,4 @@ struct RaceRepository {
     }
 }
 
-enum DataType: String {
-    case buildings, characters, objects, skills
-}
 
-protocol DataProvider {
-    static func getData(for race: Race, type: DataType) throws -> Data
-    
-    static func getBaseData(type: DataType) throws -> Data
-}
-
-class XCAssetProvider: DataProvider {
-    enum Error: Swift.Error {
-        case unableToLoadAsset(assetName: String)
-    }
-    
-    static func getData(for race: Race, type: DataType) throws -> Data {
-        let assetName = NSDataAsset.Name(rawValue:"\(race.rawValue)/\(type.rawValue)")
-        guard let asset = NSDataAsset(name: assetName) else {
-            throw Error.unableToLoadAsset(assetName: assetName.rawValue)
-        }
-        return asset.data
-    }
-    
-    static func getBaseData(type: DataType) throws -> Data {
-        let assetName = NSDataAsset.Name(rawValue:type.rawValue)
-        guard let asset = NSDataAsset(name: assetName) else {
-            throw Error.unableToLoadAsset(assetName: assetName.rawValue)
-        }
-        return asset.data
-    }
-}

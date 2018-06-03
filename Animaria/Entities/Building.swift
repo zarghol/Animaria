@@ -7,9 +7,9 @@
 //
 
 import Cocoa
-import GameplayKit
 
 struct BuildingTemplate: Encodable /* Not used, just to synthesize the CodingKeys */ {
+    let id: Int
     let name: String
     let description: String
     
@@ -21,7 +21,13 @@ struct BuildingTemplate: Encodable /* Not used, just to synthesize the CodingKey
     let skillsIds: [SkillId]
 }
 
-extension BuildingTemplate: Template {
+extension BuildingTemplate: BuildableTemplate { }
+
+extension BuildingTemplate: UnitTemplate {
+    var unitType: UnitType {
+        return .building
+    }
+
     init(from decoder: Decoder) throws {
         guard let race = decoder.userInfo[Race.key] as? Race else {
             throw DecodingError.valueNotFound(Race.self, DecodingError.Context(codingPath: [], debugDescription: "race not found in the decoder's userInfo"))
@@ -29,6 +35,7 @@ extension BuildingTemplate: Template {
 
         let container = try decoder.container(keyedBy: BuildingTemplate.CodingKeys.self)
 
+        self.id = try container.decode(Int.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
         self.description = try container.decode(String.self, forKey: .description)
 
@@ -58,8 +65,10 @@ extension BuildingTemplate: Template {
     }
 }
 
+import GameplayKit
+
 class Building: TempletableEntity<BuildingTemplate> {
-    init(template: BuildingTemplate, camp: Int, isMain: Bool) {
+    init(template: BuildingTemplate, camp: Int, isMain: Bool, entityManager: EntityManager) {
         super.init(template: template)
         
         self.addComponent(NamingComponent(name: template.name, description: template.description))
@@ -70,7 +79,7 @@ class Building: TempletableEntity<BuildingTemplate> {
         
         let buildingsSkills = RaceRepository.all.skills(for: template.race)
         
-        self.addComponent(SkillBookComponent(templates: buildingsSkills.subset(filterPath: \SkillTemplate.id, values: template.skillsIds)))
+        self.addComponent(SkillBookComponent(templates: buildingsSkills.subset(filterPath: \SkillTemplate.id, values: template.skillsIds), entityManager: entityManager))
         if isMain {
             self.addComponent(MainEntityComponent())
         }

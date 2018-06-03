@@ -39,7 +39,7 @@ class GameScene: SKScene {
     
     func initializeGame() {
         if let mainBuilding = RaceRepository.all[.panda]?.availableBuildings.first {
-            let building = Building(template: mainBuilding, camp: 0, isMain: true)
+            let building = Building(template: mainBuilding, camp: 0, isMain: true, entityManager: entityManager)
             
             if let sprite = building.component(ofType: TextureComponent.self)?.sprite {
                 let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
@@ -164,12 +164,8 @@ class GameScene: SKScene {
         let dt = currentTime - self.lastUpdateTime
         
         self.updateCameraPosition()
-        
-//        // Update entities
-//        for entity in self.entities {
-//            entity.update(deltaTime: dt)
-//        }
-//        
+        self.entityManager.update(deltaTime: dt)
+
         self.lastUpdateTime = currentTime
     }
     

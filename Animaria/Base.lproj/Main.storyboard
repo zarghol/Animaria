@@ -849,8 +849,20 @@
                                             </constraints>
                                             <color key="fillColor" name="controlDarkShadowColor" catalog="System" colorSpace="catalog"/>
                                         </box>
+                                        <progressIndicator hidden="YES" wantsLayer="YES" maxValue="1" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="85X-zs-PUL">
+                                            <rect key="frame" x="639" y="19" width="745" height="20"/>
+                                        </progressIndicator>
+                                        <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Snc-De-CDS">
+                                            <rect key="frame" x="637" y="46" width="139" height="17"/>
+                                            <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Construction en cours" id="f5t-HS-62Y">
+                                                <font key="font" metaFont="system"/>
+                                                <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                                <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                            </textFieldCell>
+                                        </textField>
                                     </subviews>
                                     <constraints>
+                                        <constraint firstItem="Snc-De-CDS" firstAttribute="leading" secondItem="85X-zs-PUL" secondAttribute="leading" id="3QA-9c-Kf3"/>
                                         <constraint firstItem="pDZ-RK-wn7" firstAttribute="leading" secondItem="hAs-A1-btC" secondAttribute="trailing" constant="8" id="5x7-Ad-4MR"/>
                                         <constraint firstItem="2t5-Tn-j4Q" firstAttribute="leading" secondItem="DhZ-vR-YES" secondAttribute="trailing" id="6iC-yK-tzN"/>
                                         <constraint firstItem="zj3-l8-YKq" firstAttribute="leading" secondItem="D8o-dJ-VQd" secondAttribute="trailing" constant="20" id="7TL-ir-4qM"/>
@@ -858,11 +870,14 @@
                                         <constraint firstItem="GLb-yL-HPA" firstAttribute="leading" secondItem="pTV-lk-qsJ" secondAttribute="trailing" constant="8" id="8yr-S7-I45"/>
                                         <constraint firstItem="mhv-P4-7YP" firstAttribute="leading" secondItem="8Ke-ed-rld" secondAttribute="leading" constant="8" id="Esm-kg-cZf"/>
                                         <constraint firstItem="D8o-dJ-VQd" firstAttribute="top" secondItem="Q1N-NB-eRP" secondAttribute="top" id="GTy-HY-9m7"/>
+                                        <constraint firstItem="85X-zs-PUL" firstAttribute="leading" secondItem="rPK-6Y-V7q" secondAttribute="trailing" constant="20" id="Jbw-Bn-ewP"/>
                                         <constraint firstItem="hAs-A1-btC" firstAttribute="top" secondItem="8Ke-ed-rld" secondAttribute="top" constant="8" id="P9v-xK-Dyg"/>
                                         <constraint firstItem="hy2-8C-NX5" firstAttribute="top" secondItem="rPK-6Y-V7q" secondAttribute="bottom" constant="8" id="PDs-br-YUu"/>
                                         <constraint firstItem="cXx-14-Ibc" firstAttribute="top" secondItem="8Ke-ed-rld" secondAttribute="top" constant="8" id="R18-y7-Fer"/>
+                                        <constraint firstItem="85X-zs-PUL" firstAttribute="top" secondItem="Snc-De-CDS" secondAttribute="bottom" constant="8" id="Rif-DJ-b2z"/>
                                         <constraint firstItem="rPK-6Y-V7q" firstAttribute="top" secondItem="8Ke-ed-rld" secondAttribute="top" constant="20" id="Rik-pG-Wvv"/>
                                         <constraint firstAttribute="bottom" secondItem="DhZ-vR-YES" secondAttribute="bottom" id="V2j-7P-Wid"/>
+                                        <constraint firstItem="hAs-A1-btC" firstAttribute="leading" secondItem="85X-zs-PUL" secondAttribute="trailing" constant="20" id="V8c-Sq-ps5"/>
                                         <constraint firstItem="mhv-P4-7YP" firstAttribute="top" secondItem="8Ke-ed-rld" secondAttribute="top" constant="8" id="VqP-jp-Y1W"/>
                                         <constraint firstItem="D8o-dJ-VQd" firstAttribute="top" secondItem="8Ke-ed-rld" secondAttribute="top" id="XjM-aD-kwJ"/>
                                         <constraint firstItem="GLb-yL-HPA" firstAttribute="bottom" secondItem="pTV-lk-qsJ" secondAttribute="bottom" id="a2Y-bv-Bwz"/>
@@ -882,6 +897,7 @@
                                         <constraint firstAttribute="trailing" secondItem="cXx-14-Ibc" secondAttribute="trailing" constant="8" id="p9U-qq-n0G"/>
                                         <constraint firstItem="rPK-6Y-V7q" firstAttribute="leading" secondItem="GLb-yL-HPA" secondAttribute="trailing" constant="20" id="pdQ-iL-dGt"/>
                                         <constraint firstAttribute="bottom" secondItem="cXx-14-Ibc" secondAttribute="bottom" constant="8" id="qub-Qn-1tg"/>
+                                        <constraint firstAttribute="bottom" secondItem="85X-zs-PUL" secondAttribute="bottom" constant="20" id="qzj-tD-HlW"/>
                                         <constraint firstAttribute="bottom" secondItem="2t5-Tn-j4Q" secondAttribute="bottom" id="snY-h6-KQr"/>
                                         <constraint firstItem="2t5-Tn-j4Q" firstAttribute="top" secondItem="KsB-SV-8KX" secondAttribute="bottom" constant="8" id="tzf-DE-C2O"/>
                                         <constraint firstAttribute="bottom" secondItem="zj3-l8-YKq" secondAttribute="bottom" constant="20" id="udQ-Cx-Qc0"/>
@@ -905,6 +921,8 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="buildingLabel" destination="Snc-De-CDS" id="VSF-f3-dN1"/>
+                        <outlet property="buildingProgressIndicator" destination="85X-zs-PUL" id="lJc-Qh-sTF"/>
                         <outlet property="descriptionTextField" destination="hy2-8C-NX5" id="Od1-pg-H6c"/>
                         <outlet property="energySlider" destination="GLb-yL-HPA" id="nFv-ad-pVE"/>
                         <outlet property="inventoryButton" destination="hAs-A1-btC" id="Y1V-re-4UI"/>

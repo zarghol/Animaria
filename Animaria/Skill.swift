@@ -8,92 +8,6 @@
 
 import Foundation
 
-//class SkillBook {
-//    private static let baseSkills: [SkillTemplate] = {
-//        do {
-//            let skillsData = try XCAssetProvider.getBaseData(type: .skills)
-//            return try JSONDecoder().decode([SkillTemplate].self, from: skillsData)
-//        } catch {
-//            print("unable to get the baseSkills : \(error)")
-//            return []
-//        }
-//    }()
-//    
-//    var availableSkills: [SkillTemplate]
-//}
-
-enum SkillType: Decodable {
-    enum CodingKeys: String, CodingKey {
-        case type, characteristics, requiredToBuild
-    }
-    
-    case direct([Characteristic: Double])
-    case duration([Characteristic: Double])
-    case building([Resource: Int]) // ??
-    case basic
-    
-    init(from decoder: Decoder) throws {
-        if let singleContainer = try? decoder.singleValueContainer(),
-           let typeString = try? singleContainer.decode(String.self) {
-            switch typeString {
-            case "basic":
-                self = .basic
-                return
-            default:
-                throw DecodingError.valueNotFound(SkillType.self, DecodingError.Context(codingPath: [CodingKeys.type], debugDescription: "unknown value for this key : \(typeString)"))
-            }
-        } else {
-            let innerContainer = try decoder.container(keyedBy: CodingKeys.self)
-            let typeString = try innerContainer.decode(String.self, forKey: .type)
-            switch typeString {
-            case "direct":
-                let characteristics: [Characteristic: Double] = try innerContainer.decode([String: Double].self, forKey: .characteristics).map { tuple in
-                    if let charac = Characteristic(rawValue: tuple.key) {
-                        return (charac, tuple.value)
-                    } else {
-                        throw DecodingError.valueNotFound(
-                            Characteristic.self,
-                            DecodingError.Context(codingPath: [SkillType.CodingKeys.characteristics], debugDescription: "unable to build an enum value with value provided : \(tuple.key)")
-                        )
-                    }
-                }
-                self = .direct(characteristics)
-                return
-            case "duration":
-                let characteristics: [Characteristic: Double] = try innerContainer.decode([String: Double].self, forKey: .characteristics).map { tuple in
-                    if let charac = Characteristic(rawValue: tuple.key) {
-                        return (charac, tuple.value)
-                    } else {
-                        throw DecodingError.valueNotFound(
-                            Characteristic.self,
-                            DecodingError.Context(codingPath: [SkillType.CodingKeys.characteristics], debugDescription: "unable to build an enum value with value provided : \(tuple.key)")
-                        )
-                    }
-                }
-                self = .duration(characteristics)
-                return
-            case "building":
-                let resources: [Resource: Int] = try innerContainer.decode([String: Int].self, forKey: .requiredToBuild).map { tuple in
-                    if let charac = Resource(rawValue: tuple.key) {
-                        return (charac, tuple.value)
-                    } else {
-                        throw DecodingError.valueNotFound(
-                            Resource.self,
-                            DecodingError.Context(codingPath: [SkillType.CodingKeys.requiredToBuild], debugDescription: "unable to build an enum value with value provided : \(tuple.key)")
-                        )
-                    }
-                }
-                self = .building(resources)
-                return
-            default:
-                throw DecodingError.valueNotFound(SkillType.self, DecodingError.Context(codingPath: [CodingKeys.type], debugDescription: "unknown value for this key : \(typeString)"))
-            }
-        }
-    }
-}
-
-typealias SkillId = String
-
 struct SkillTemplate: Decodable {
     let id: SkillId
     let name: String
@@ -105,19 +19,38 @@ struct SkillTemplate: Decodable {
     let cooldown: Double
 }
 
-import GameplayKit
-
-class Skill { 
+class Skill: NSObject {
     let template: SkillTemplate
     var level: Int
     var experience: Int
-    var currentTime: Double // other type ?
+    var currentTime: Double {
+        didSet {
+            if let race = self.template.id.race,
+               let resources = RaceRepository.all[race]?.getBuildableUnitTemplate(for: self)?.requiredToBuild,
+               let neededTime = resources[.time] {
+                self.progress = min(self.currentTime / Double(neededTime), 1.0)
+            }
+        }
+    }
+
+    @objc private(set) var progress: Double {
+        willSet {
+            willChangeValue(forKey: "progress")
+        }
+
+        didSet {
+            didChangeValue(forKey: "progress")
+        }
+    }
     
     init(template: SkillTemplate, level: Int = 0, experience: Int = 0, currentTime: Double = 0.0) {
+        self.progress = 1.0
         self.level = level
         self.template = template
         self.experience = experience
         self.currentTime = currentTime
+
+        super.init()
     }
     
     func earnExperience() { // Experience component ???

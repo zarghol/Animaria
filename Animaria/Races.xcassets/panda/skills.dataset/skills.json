@@ -5,7 +5,8 @@
     "description": "Produit un panda",
     "type": {
       "type": "building",
-      "requiredToBuild": { }
+      "unitType": "character",
+      "id": 0
     },
     "requiredTitle": null,
     "energyQuantity": 0.0,

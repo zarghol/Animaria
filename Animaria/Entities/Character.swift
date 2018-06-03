@@ -8,27 +8,35 @@
 
 import Foundation
 
-struct CharacterTemplate: Encodable {
+struct CharacterTemplate: Encodable /* Not used, just to synthesize the CodingKeys */ {
+    let id: Int
     let maxLife: Double
     let maxEnergy: Double
     let characteristics: [Characteristic: Double]
     let name: String
+    let description: String
     let race: Race
     let requiredToBuild: [Resource: Int]
     let skillsIds: [SkillId]
 }
 
-extension CharacterTemplate: Template {
+extension CharacterTemplate: BuildableTemplate { }
+
+extension CharacterTemplate: UnitTemplate {
+    var unitType: UnitType {
+        return .character
+    }
+
     init(from decoder: Decoder) throws {
         guard let race = decoder.userInfo[Race.key] as? Race else {
             throw DecodingError.valueNotFound(Race.self, DecodingError.Context(codingPath: [], debugDescription: "race not found in the decoder's userInfo"))
         }
         
         let container = try decoder.container(keyedBy: CharacterTemplate.CodingKeys.self)
-        
+
+        self.id = try container.decode(Int.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
-        
-//        self.description = try container.decode(String.self, forKey: .description)
+        self.description = try container.decode(String.self, forKey: .description)
         self.maxLife = try container.decode(Double.self, forKey: .maxLife)
         self.maxEnergy = try container.decode(Double.self, forKey: .maxEnergy)
         let characteristicsDictionary = try container.decode([String: Double].self, forKey: .characteristics)
@@ -56,10 +64,23 @@ extension CharacterTemplate: Template {
     }
 }
 
-
-
 import GameplayKit
 
 class Character: TempletableEntity<CharacterTemplate> {
-    
+    init(template: CharacterTemplate, camp: Int, entityManager: EntityManager) {
+        super.init(template: template)
+        self.addComponent(NamingComponent(name: template.name, description: template.description))
+        let texture = SKTexture(imageNamed: "\(template.race)/\(template.name)")
+        self.addComponent(TextureComponent(texture: texture, size: texture.size()))
+        self.addComponent(LifeComponent(maxLife: template.maxLife))
+        self.addComponent(CampComponent(camp: camp))
+        // TODO: add Moveable Component
+        let skills = RaceRepository.all.skills(for: template.race)
+
+        self.addComponent(SkillBookComponent(templates: skills.subset(filterPath: \SkillTemplate.id, values: template.skillsIds), entityManager: entityManager))
+    }
+
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

@@ -18,4 +18,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             NSApplication.shared.isAutomaticCustomizeTouchBarMenuItemEnabled = true
         }
     }
+    
+    func applicationDidBecomeActive(_ notification: Notification) {
+        NSApp.presentationOptions = [.hideDock, .hideMenuBar]
+    }
 }

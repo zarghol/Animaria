@@ -1,5 +1,6 @@
 [
   {
+    "id": 0,
     "name": "épée",
     "description": "une épée à simple tranchant en acier.",
     "characteristics": {

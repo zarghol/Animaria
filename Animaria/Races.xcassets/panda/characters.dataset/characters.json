@@ -1,6 +1,8 @@
 [
   {
+    "id": 0,
     "name": "panda",
+    "description": "Un panda simple. Il aime manger du bambou, et fera ce que vous lui demandez.",
     "maxLife": 3.0,
     "maxEnergy": 5.0,
     "characteristics": {
@@ -14,6 +16,6 @@
       "time": 10.0,
       "wood": 5.0
     },
-    "skillsIds": []
+    "skillsIds": ["base_0", "base_1"]
   }
 ]

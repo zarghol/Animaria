@@ -8,7 +8,8 @@
 
 import Foundation
 
-struct ObjectTemplate: Encodable {
+struct ObjectTemplate: Encodable /* Not used, just to synthesize the CodingKeys */ {
+    let id: Int
     let name: String
     let characteristics: [Characteristic: Double]
     let type: ObjectType
@@ -16,10 +17,17 @@ struct ObjectTemplate: Encodable {
     let requiredToBuild: [Resource: Int]
 }
 
-extension ObjectTemplate: Template {
+extension ObjectTemplate: BuildableTemplate { }
+
+extension ObjectTemplate: UnitTemplate {
+    var unitType: UnitType {
+        return .object
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ObjectTemplate.CodingKeys.self)
-        
+
+        self.id = try container.decode(Int.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
         let characteristicsDictionary = try container.decode([String: Double].self, forKey: .characteristics)
         self.characteristics = try characteristicsDictionary.map { tuple in
@@ -45,21 +53,6 @@ extension ObjectTemplate: Template {
         }
     }
 }
-
-enum ObjectType: String {
-    case weapon, armor
-}
-extension ObjectType: Decodable, Encodable { }
-
-enum ObjectLocation: String {
-    case hand, leftHand, rightHand, twoHand, head, shoulder, body, legs, feet, none
-}
-extension ObjectLocation: Decodable, Encodable { }
-
-enum Characteristic: String {
-    case damages, armor, strength, intellect, endurance, wisdom, constitution, range, attackSpeed
-}
-extension Characteristic: Decodable, Encodable { }
 
 import GameplayKit
 

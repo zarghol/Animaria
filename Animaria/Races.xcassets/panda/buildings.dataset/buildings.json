@@ -1,5 +1,6 @@
 [
   {
+    "id": 0,
     "name": "Foyer",
     "description": "Le bâtiment principal des Pandas. Ils naissent tous ici !",
     "maxLife": 50.0,
@@ -15,6 +16,7 @@
     "skillsIds": ["base_0", "base_1", "panda_0"]
   },
   {
+    "id": 1,
     "name": "Laboratoire",
     "description": "",
     "maxLife": 100.0,
@@ -30,6 +32,7 @@
     "skillsIds": ["base_1"]
   },
   {
+    "id": 2,
     "name": "Moulin",
     "description": "",
     "maxLife": 100.0,
@@ -46,6 +49,7 @@
     "skillsIds": ["base_0"]
   },
   {
+    "id": 3,
     "name": "Etablissement",
     "description": "",
     "maxLife": 100.0,
@@ -61,6 +65,7 @@
     "skillsIds": ["base_0", "base_1"]
   },
   {
+    "id": 4,
     "name": "Energistic",
     "description": "",
     "maxLife": 150.0,
