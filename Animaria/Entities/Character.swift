@@ -67,7 +67,7 @@ extension CharacterTemplate: UnitTemplate {
 import GameplayKit
 
 class Character: TempletableEntity<CharacterTemplate> {
-    init(template: CharacterTemplate, camp: Int, entityManager: EntityManager) {
+    init(template: CharacterTemplate, camp: Camp, entityManager: EntityManager) {
         super.init(template: template)
         self.addComponent(NamingComponent(name: template.name, description: template.description))
         let texture = SKTexture(imageNamed: "\(template.race)/\(template.name)")

@@ -19,12 +19,9 @@ extension SkillBookComponent: NSCollectionViewDataSource {
         let skill = self.skills[indexPath.item]
         
         let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SkillCell"), for: indexPath)
-        
-//        guard let cell = item as? SkillCell else {
-//            return item
-//        }
-        item.imageView?.image = NSImage(named: NSImage.Name(rawValue: skill.template.id.rawValue))
-//        cell.image = image
+
+//        NSImage.Name(
+        item.imageView?.image = NSImage(named: skill.template.id.rawValue)
         
         return item
     }
@@ -37,6 +34,7 @@ class ViewController: NSViewController {
     // MARK: - Interface
 
     var uiObservations = [String: NSKeyValueObservation]()
+    var resourcesObservation: NSKeyValueObservation!
     
     @IBOutlet weak var portraitView: NSImageView!
     
@@ -51,8 +49,20 @@ class ViewController: NSViewController {
     @IBOutlet weak var inventoryButton: NSButton!
     @IBOutlet weak var titlesButton: NSButton!
     
-    @IBOutlet weak var buildingLabel: NSTextField!
+    @IBOutlet weak var informationLabel: NSTextField!
     @IBOutlet weak var buildingProgressIndicator: NSProgressIndicator!
+
+
+    @IBOutlet weak var woodProgressIndicator: NSProgressIndicator!
+    @IBOutlet weak var woodTextfield: NSTextField!
+
+    @IBOutlet weak var metalProgressIndicator: NSProgressIndicator!
+    @IBOutlet weak var metalTextfield: NSTextField!
+
+    @IBOutlet weak var crystalProgressIndicator: NSProgressIndicator!
+    @IBOutlet weak var crystalTextfield: NSTextField!
+
+
     // MARK: -
     
     var entityManager: EntityManager!
@@ -65,7 +75,7 @@ class ViewController: NSViewController {
         // including entities and graphs.
         // Get the SKScene from the loaded GKScene
         guard let scene = GKScene(fileNamed: "GameScene"),
-              let sceneNode = scene.rootNode as! GameScene? else {
+              let sceneNode = scene.rootNode as? GameScene else {
             return
         }
         let startPositions = scene.entities
@@ -91,6 +101,12 @@ class ViewController: NSViewController {
             view.showsNodeCount = true
         }
         self.updateInterface()
+
+        resourcesObservation = sceneNode.observe(\GameScene.playerCamp.resourcesDidChanges) { (_, _) in
+            print("updateResources")
+            self.updateResources()
+        }
+        self.updateResources()
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateInterface), name: GameScene.SelectedObjectNotificationName, object: sceneNode)
     }
@@ -106,7 +122,7 @@ class ViewController: NSViewController {
             self.skillsCollectionView.dataSource = nil
             self.skillsCollectionView.reloadData()
             self.uiObservations.removeAll()
-            self.buildingLabel.isHidden = true
+            self.informationLabel.isHidden = true
             self.buildingProgressIndicator.isHidden = true
             self.buildingProgressIndicator.doubleValue = 0.0
             return
@@ -131,7 +147,7 @@ class ViewController: NSViewController {
         } else {
             self.skillsCollectionView.dataSource = nil
             self.uiObservations.removeAll()
-            self.buildingLabel.isHidden = true
+            self.informationLabel.isHidden = true
             self.buildingProgressIndicator.isHidden = true
             self.buildingProgressIndicator.doubleValue = 0.0
         }
@@ -141,14 +157,36 @@ class ViewController: NSViewController {
         self.titlesButton.isHidden = false
     }
 
+    func updateResources() {
+        guard let resources = (self.skView.scene as? GameScene)?.playerCamp.availableResources else {
+            return
+        }
+        if let (value, maxValue) = resources[.wood] {
+            self.woodTextfield.stringValue = "\(value) / \(maxValue)"
+            self.woodProgressIndicator.maxValue = Double(maxValue)
+            self.woodProgressIndicator.doubleValue = Double(value)
+        }
+        if let (value, maxValue) = resources[.metal] {
+            self.metalTextfield.stringValue = "\(value) / \(maxValue)"
+            self.metalProgressIndicator.maxValue = Double(maxValue)
+            self.metalProgressIndicator.doubleValue = Double(value)
+        }
+        if let (value, maxValue) = resources[.crystal] {
+            self.crystalTextfield.stringValue = "\(value) / \(maxValue)"
+            self.crystalProgressIndicator.maxValue = Double(maxValue)
+            self.crystalProgressIndicator.doubleValue = Double(value)
+        }
+    }
+
     func checkSkillProgressDisplayed(skillsComponent: SkillBookComponent) {
         if let currentSkill = skillsComponent.currentSkill, currentSkill.progress < 1.0 {
-            self.buildingLabel.isHidden = false
+            self.informationLabel.isHidden = false
+            self.informationLabel.stringValue = "Construction en cours..."
             self.buildingProgressIndicator.isHidden = false
             let observation = currentSkill.observe(\Skill.progress) { (skill, _) in
                 self.buildingProgressIndicator.doubleValue = skill.progress
                 if skill.progress >= 1.0 {
-                    self.buildingLabel.isHidden = true
+                    self.informationLabel.isHidden = true
                     self.buildingProgressIndicator.isHidden = true
                     self.uiObservations["skill.progress"] = nil
                 }
@@ -156,7 +194,7 @@ class ViewController: NSViewController {
 
             uiObservations["skill.progress"] = observation
         } else {
-            self.buildingLabel.isHidden = true
+            self.informationLabel.isHidden = true
             self.buildingProgressIndicator.isHidden = true
             self.uiObservations["skill.progress"] = nil
         }
@@ -181,9 +219,15 @@ extension ViewController: NSCollectionViewDelegate {
         }
         let skill = skillsComponent.skills[selectedIndexPath.item]
 
-        skillsComponent.execute(skill)
-
-        self.checkSkillProgressDisplayed(skillsComponent: skillsComponent)
+        do {
+            try skillsComponent.execute(skill)
+            self.checkSkillProgressDisplayed(skillsComponent: skillsComponent)
+        } catch  SkillError.needResources(let resources) {
+            self.informationLabel.stringValue = "Resources manquantes : \(resources)"
+            self.informationLabel.isHidden = false
+        } catch {
+            print("unable to cast skill : \(error)")
+        }
     }
 }
 
@@ -192,7 +236,7 @@ extension NSTouchBarItem.Identifier {
 }
 
 extension NSTouchBar.CustomizationIdentifier {
-    static let debugBar = NSTouchBar.CustomizationIdentifier(rawValue: "debugBar")
+    static let debugBar: NSTouchBar.CustomizationIdentifier = "debugBar"
 }
 
 @available(OSX 10.12.1, *)

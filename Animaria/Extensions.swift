@@ -51,6 +51,13 @@ extension CGVector {
         newVector.dy *= right
         return newVector
     }
+
+    static func + (left: CGVector, right: CGVector) -> CGVector {
+        var newVector = left
+        newVector.dx += right.dx
+        newVector.dy += right.dy
+        return newVector
+    }
 }
 
 extension CGFloat {

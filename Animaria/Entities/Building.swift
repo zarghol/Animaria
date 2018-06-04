@@ -68,7 +68,7 @@ extension BuildingTemplate: UnitTemplate {
 import GameplayKit
 
 class Building: TempletableEntity<BuildingTemplate> {
-    init(template: BuildingTemplate, camp: Int, isMain: Bool, entityManager: EntityManager) {
+    init(template: BuildingTemplate, camp: Camp, isMain: Bool, entityManager: EntityManager) {
         super.init(template: template)
         
         self.addComponent(NamingComponent(name: template.name, description: template.description))

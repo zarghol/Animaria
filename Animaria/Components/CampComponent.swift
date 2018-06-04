@@ -10,9 +10,9 @@ import Cocoa
 import GameplayKit
 
 class CampComponent: GKComponent {
-    let camp: Int
+    unowned let camp: Camp
     
-    init(camp: Int) {
+    init(camp: Camp) {
         self.camp = camp
         
         super.init()

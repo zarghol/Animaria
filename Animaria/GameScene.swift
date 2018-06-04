@@ -35,11 +35,24 @@ class GameScene: SKScene {
     }
     
     weak var entityManager: EntityManager!
+
     var startPositions = [CGPoint]()
-    
+    @objc var camps = [Camp]()
+
+    @objc weak var playerCamp: Camp!
+
     func initializeGame() {
-        if let mainBuilding = RaceRepository.all[.panda]?.availableBuildings.first {
-            let building = Building(template: mainBuilding, camp: 0, isMain: true, entityManager: entityManager)
+        guard let pandas = RaceRepository.all[.panda] else {
+            return
+        }
+        let initialCamp = Camp(id: 0, race: pandas)
+        initialCamp.collect(.wood, quantity: 100)
+        initialCamp.collect(.metal, quantity: 10)
+        initialCamp.collect(.crystal, quantity: 5)
+        camps.append(initialCamp)
+        self.playerCamp = initialCamp
+        if let mainBuilding = initialCamp.templates.availableBuildings.first {
+            let building = Building(template: mainBuilding, camp: initialCamp, isMain: true, entityManager: entityManager)
             
             if let sprite = building.component(ofType: TextureComponent.self)?.sprite {
                 let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)

@@ -12,4 +12,10 @@ enum Resource: String {
     case crystal, metal, wood, time
 }
 
+extension Resource {
+    static var allCases: [Resource] {
+        return [.crystal, .metal, wood]
+    }
+}
+
 extension Resource: Decodable, Encodable { }

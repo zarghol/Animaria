@@ -8,6 +8,16 @@
 
 import GameplayKit
 
+enum SkillError: Error {
+    case campNotFound(GKEntity?)
+    case unitTemplateNotFound(Skill)
+    case needResources([Resource])
+}
+
+enum ResourceStatus {
+    case ok, needTime, needStockedResources([Resource])
+}
+
 class SkillBookComponent: GKComponent {
     let skills: [Skill]
     var currentSkill: Skill?
@@ -20,7 +30,7 @@ class SkillBookComponent: GKComponent {
         super.init()
     }
     
-    func execute(_ skill: Skill) {
+    func execute(_ skill: Skill) throws {
         guard skill.template.id != .base_0 else { // stop
             self.stopCurrentSkill()
             return
@@ -37,12 +47,28 @@ class SkillBookComponent: GKComponent {
         case .basic:
             break
         case .building(_, _):
+            guard let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
+                throw SkillError.campNotFound(self.entity)
+            }
+
+            guard let template = camp.templates.getBuildableUnitTemplate(for: skill) else {
+                throw SkillError.unitTemplateNotFound(skill)
+            }
+
+            let ensureResources = self.ensureResources(time: skill.currentTime, requiredResources: template.requiredToBuild, availableResources: camp.availableResources.map { ($0.key, $0.value.current) })
+            if case .needStockedResources(let resources) = ensureResources {
+                print("missing resources: \(resources)")
+                throw SkillError.needResources(resources)
+            }
+            camp.removeResources(template.requiredToBuild)
+            
             self.currentSkill = skill
             skill.currentTime = 0.0
             do {
                 try self.checkBuilding(for: skill)
+                //
             } catch {
-                self.currentSkill = nil
+                self.stopCurrentSkill()
             }
 
         case .direct(_):
@@ -57,24 +83,26 @@ class SkillBookComponent: GKComponent {
         currentSkill = nil
     }
     
-    private func ensureResources(time: TimeInterval, requiredResources: [Resource: Int]) -> Bool {
-//        guard let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
-//            return false
-//        }
-        
-        let availableResources = [Resource: Int]()
-        // TODO: get the resources of camps
-        // use subset to get only the needed resources
-        
+    private func ensureResources(time: TimeInterval, requiredResources: [Resource: Int], availableResources: [Resource: Int]) -> ResourceStatus {
+        var missing = [Resource]()
+        var needTime = false
         for (resource, amount) in requiredResources {
             if resource == .time && time < TimeInterval(amount) { // pour mutualiser : -time > -amount ???
-                return false
+                needTime = true
             } else if let availableAmount = availableResources[resource], amount > availableAmount {
-                return false
+                missing.append(resource)
+            } else if availableResources[resource] == nil {
+                missing.append(resource)
             }
         }
-        
-        return true
+
+        if missing.count > 0 {
+            return .needStockedResources(missing)
+        } else if needTime {
+            return .needTime
+        } else {
+            return .ok
+        }
     }
     
     override func update(deltaTime seconds: TimeInterval) {
@@ -91,31 +119,33 @@ class SkillBookComponent: GKComponent {
     }
 
     func checkBuilding(for skill: Skill) throws {
-        guard let race = skill.template.id.race,
-              let template = RaceRepository.all[race]?.getBuildableUnitTemplate(for: skill) else {
-            return
+        guard let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
+            throw SkillError.campNotFound(self.entity)
         }
 
-        if self.ensureResources(time: skill.currentTime, requiredResources: template.requiredToBuild) {
+        guard let template = camp.templates.getBuildableUnitTemplate(for: skill) else {
+            throw SkillError.unitTemplateNotFound(skill)
+        }
+
+        if skill.progress == 1.0 {
             let entity: GKEntity
             switch template.unitType {
             case .building:
-                entity = Building(template: template as! BuildingTemplate, camp: 0, isMain: false, entityManager: entityManager)
+                entity = Building(template: template as! BuildingTemplate, camp: camp, isMain: false, entityManager: entityManager)
             case .character:
-                entity = Character(template: template as! CharacterTemplate, camp: 0, entityManager: entityManager)
+                entity = Character(template: template as! CharacterTemplate, camp: camp, entityManager: entityManager)
             case .object:
                 entity = Object(template: template as! ObjectTemplate)
             }
 
-            let positionToBuild: CGPoint
-            if let builderFrame = self.entity?.component(ofType: TextureComponent.self)?.sprite.frame {
-                positionToBuild = CGPoint(x: builderFrame.midX, y: builderFrame.minY)
-            } else {
-                positionToBuild = .zero
-            }
-
             if let positionComponent = entity.component(ofType: TextureComponent.self) {
-                positionComponent.sprite.position = positionToBuild.applying(CGAffineTransform(translationX: 0.0, y: -1 * positionComponent.sprite.size.height / 2))
+                let positionToBuild: CGPoint
+                if let builderFrame = self.entity?.component(ofType: TextureComponent.self)?.sprite.frame {
+                    positionToBuild = CGPoint(x: builderFrame.midX, y: builderFrame.minY - positionComponent.sprite.size.height / 2)
+                } else {
+                    positionToBuild = .zero
+                }
+                positionComponent.sprite.position = positionToBuild
             }
             self.entityManager.insert(entity)
             self.stopCurrentSkill()

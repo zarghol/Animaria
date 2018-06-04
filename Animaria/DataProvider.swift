@@ -24,17 +24,17 @@ class XCAssetProvider: DataProvider {
     }
 
     static func getData(for race: Race, type: DataType) throws -> Data {
-        let assetName = NSDataAsset.Name(rawValue:"\(race.rawValue)/\(type.rawValue)")
+        let assetName: NSDataAsset.Name = "\(race.rawValue)/\(type.rawValue)"
         guard let asset = NSDataAsset(name: assetName) else {
-            throw Error.unableToLoadAsset(assetName: assetName.rawValue)
+            throw Error.unableToLoadAsset(assetName: assetName)
         }
         return asset.data
     }
 
     static func getBaseData(type: DataType) throws -> Data {
-        let assetName = NSDataAsset.Name(rawValue:type.rawValue)
+        let assetName: NSDataAsset.Name = type.rawValue
         guard let asset = NSDataAsset(name: assetName) else {
-            throw Error.unableToLoadAsset(assetName: assetName.rawValue)
+            throw Error.unableToLoadAsset(assetName: assetName)
         }
         return asset.data
     }
