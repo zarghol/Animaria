@@ -36,6 +36,8 @@ class GameScene: SKScene {
     
     weak var entityManager: EntityManager!
 
+    var minimapScene: SKScene!
+
     var startPositions = [CGPoint]()
     @objc var camps = [Camp]()
 
@@ -54,20 +56,16 @@ class GameScene: SKScene {
         if let mainBuilding = initialCamp.templates.availableBuildings.first {
             let building = Building(template: mainBuilding, camp: initialCamp, isMain: true, entityManager: entityManager)
             
-            if let sprite = building.component(ofType: TextureComponent.self)?.sprite {
+            if let component = building.component(ofType: TextureComponent.self) {
                 let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
-                sprite.position = startPosition
+                component.position = startPosition
+
+                self.camera?.position = startPosition
             }
             self.entityManager.insert(building)            
         }
     }
 
-//    override func sceneDidLoad() {
-//        super.sceneDidLoad()
-//        
-//        self.initializeGame()
-//    }
-    
     func updateBorderTracking(on view: NSView) {
         for area in trackingArea {
             view.removeTrackingArea(area)
@@ -120,7 +118,6 @@ class GameScene: SKScene {
         super.didMove(to: view)
         
         self.initializeGame()
-//        self.camera?.setScale(0.5)
         self.updateBorderTracking(on: view)
     }
     
@@ -132,7 +129,7 @@ class GameScene: SKScene {
 
         let scale = camera.yScale + event.scrollingDeltaY / 10.0
         self.camera?.setScale(scale.contained(in: 0.2..<1))
-        self.debugText = "\(self.camera?.yScale)"
+//        self.debugText = "\(self.camera?.yScale)"
     }
     
     override func mouseUp(with event: NSEvent) {
@@ -219,6 +216,57 @@ class GameScene: SKScene {
         } else {
             camera.removeAction(forKey: "moveCamera")
         }
+    }
+
+    func createMinimap(with viewHeight: Int) {
+        let minimapScene = SKScene(size: CGSize(width: viewHeight, height: viewHeight))
+
+        for index in 0..<(viewHeight * viewHeight) {
+            let minimapCoord = CGPoint(x: index % viewHeight, y: index / viewHeight)
+            let realCoord = minimapCoord * (self.size.height / CGFloat(viewHeight))
+
+            let color = self.determineBackground(for: realCoord)?.color ?? .clear
+
+            let colorNode = SKSpriteNode(color: color, size: CGSize(width: 1, height: 1))
+            colorNode.position = minimapCoord
+            minimapScene.addChild(colorNode)
+        }
+
+        self.minimapScene = minimapScene
+    }
+
+    enum TileType: String, CaseIterable {
+        case water, sand, background
+
+        var color: NSColor {
+            switch self {
+            case .background:
+                return .green
+            case .sand:
+                return .yellow
+            case .water:
+                return .blue
+            }
+        }
+    }
+
+    func determineBackground(for coordinate: CGPoint) -> TileType? {
+        guard let waterNode = self.childNode(withName: "Water") as? SKTileMapNode,
+            let sandNode = self.childNode(withName: "Sand") as? SKTileMapNode,
+            let backgroundNode = self.childNode(withName: "Background") as? SKTileMapNode else {
+                return nil
+        }
+
+        let columnIndex = waterNode.tileColumnIndex(fromPosition: coordinate)
+        let rowIndex = waterNode.tileRowIndex(fromPosition: coordinate)
+
+        let nodes: [(TileType, SKTileMapNode)] = [(.water, waterNode), (.sand, sandNode), (.background, backgroundNode)]
+        for (type, node) in nodes {
+            if node.tileDefinition(atColumn: columnIndex, row: rowIndex) != nil {
+                return type
+            }
+        }
+        return nil
     }
 }
 

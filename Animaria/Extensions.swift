@@ -60,6 +60,15 @@ extension CGVector {
     }
 }
 
+extension CGPoint {
+    static func * (left: CGPoint, right: CGFloat) -> CGPoint {
+        var newVector = left
+        newVector.x *= right
+        newVector.y *= right
+        return newVector
+    }
+}
+
 extension CGFloat {
     func contained(in range: Range<CGFloat>) -> CGFloat {
         return CGFloat.maximum(CGFloat.minimum(self, range.upperBound), range.lowerBound)

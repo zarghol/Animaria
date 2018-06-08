@@ -145,7 +145,7 @@ class SkillBookComponent: GKComponent {
                 } else {
                     positionToBuild = .zero
                 }
-                positionComponent.sprite.position = positionToBuild
+                positionComponent.position = positionToBuild
             }
             self.entityManager.insert(entity)
             self.stopCurrentSkill()

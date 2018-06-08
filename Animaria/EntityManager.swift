@@ -23,10 +23,12 @@ class EntityManager {
     var toRemove = Set<GKEntity>()
     
     private(set) var entities = Set<GKEntity>()
-    let scene: SKScene
+    unowned let scene: SKScene
+    unowned let minimapScene: SKScene
     
-    init(scene: SKScene) {
+    init(scene: SKScene, minimapScene: SKScene) {
         self.scene = scene
+        self.minimapScene = minimapScene
     }
     
     func insert(_ entity: GKEntity) {
@@ -36,14 +38,16 @@ class EntityManager {
             system.addComponent(foundIn: entity)
         }
         
-        if let spriteNode = entity.component(ofType: TextureComponent.self)?.sprite {
-            scene.addChild(spriteNode)
+        if let textureComponent = entity.component(ofType: TextureComponent.self) {
+            scene.addChild(textureComponent.sprite)
+            minimapScene.addChild(textureComponent.minMapNode)
         }
     }
     
     func remove(_ entity: GKEntity) {
-        if let spriteNode = entity.component(ofType: TextureComponent.self)?.sprite {
-            spriteNode.removeFromParent()
+        if let textureComponent = entity.component(ofType: TextureComponent.self) {
+            textureComponent.sprite.removeFromParent()
+            textureComponent.minMapNode.removeFromParent()
         }
         
         entities.remove(entity)

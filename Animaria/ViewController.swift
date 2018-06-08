@@ -62,7 +62,8 @@ class ViewController: NSViewController {
     @IBOutlet weak var crystalProgressIndicator: NSProgressIndicator!
     @IBOutlet weak var crystalTextfield: NSTextField!
 
-
+    @IBOutlet weak var minimapView: SKView!
+    
     // MARK: -
     
     var entityManager: EntityManager!
@@ -81,7 +82,11 @@ class ViewController: NSViewController {
         let startPositions = scene.entities
             .filter { $0.component(ofType: StartPositionComponent.self) != nil }
             .compactMap { $0.component(ofType: GKSKNodeComponent.self)?.node.position }
-        self.entityManager = EntityManager(scene: sceneNode)
+
+        TextureComponent.minimapRatio = minimapView.frame.size.height / sceneNode.size.height
+        sceneNode.createMinimap(with: Int(minimapView.frame.size.height))
+
+        self.entityManager = EntityManager(scene: sceneNode, minimapScene: sceneNode.minimapScene)
         sceneNode.entityManager = self.entityManager
         sceneNode.startPositions = startPositions
         // Copy gameplay related content over to the scene
@@ -100,6 +105,10 @@ class ViewController: NSViewController {
             view.showsFPS = true
             view.showsNodeCount = true
         }
+
+        if let minView = self.minimapView {
+            minView.presentScene(sceneNode.minimapScene)
+        }
         self.updateInterface()
 
         resourcesObservation = sceneNode.observe(\GameScene.playerCamp.resourcesDidChanges) { (_, _) in
@@ -110,7 +119,7 @@ class ViewController: NSViewController {
         
         NotificationCenter.default.addObserver(self, selector: #selector(updateInterface), name: GameScene.SelectedObjectNotificationName, object: sceneNode)
     }
-    
+
     @objc func updateInterface() {
         guard let selectedEntity = (self.skView.scene as? GameScene)?.selectedObject else {
             self.lifeSlider.isEnabled = false

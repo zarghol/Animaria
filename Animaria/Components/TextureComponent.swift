@@ -12,12 +12,30 @@ import SpriteKit
 
 class TextureComponent: GKComponent {
 
+    static var minimapRatio: CGFloat = 0.01456 // RealSize / MinimapSize
+
+    var position: CGPoint {
+        get {
+            return self.sprite.position
+        }
+
+        set {
+            self.sprite.position = newValue
+
+            self.minMapNode.position = position * TextureComponent.minimapRatio
+        }
+    }
+
     let sprite: SKSpriteNode
+
+    let minMapNode: SKSpriteNode
     
     init(texture: SKTexture, size: CGSize) {
         self.sprite = SKSpriteNode(texture: texture, size: size)
+        let width = max(size.width * TextureComponent.minimapRatio, 1.5)
+        let heigth = max(size.height * TextureComponent.minimapRatio, 1.5)
+        self.minMapNode = SKSpriteNode(color: .red, size: CGSize(width: width, height: heigth))
         super.init()
-        
     }
     
     override func didAddToEntity() {
