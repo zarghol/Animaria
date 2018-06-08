@@ -53,17 +53,30 @@ class GameScene: SKScene {
         initialCamp.collect(.crystal, quantity: 5)
         camps.append(initialCamp)
         self.playerCamp = initialCamp
-        if let mainBuilding = initialCamp.templates.availableBuildings.first {
-            let building = Building(template: mainBuilding, camp: initialCamp, isMain: true, entityManager: entityManager)
-            
-            if let component = building.component(ofType: TextureComponent.self) {
-                let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
-                component.position = startPosition
-
-                self.camera?.position = startPosition
-            }
-            self.entityManager.insert(building)            
+        guard let mainBuilding = initialCamp.templates.availableBuildings.first else {
+            return
         }
+
+        let building = Building(template: mainBuilding, camp: initialCamp, isMain: true, entityManager: entityManager)
+
+        let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
+        self.camera?.position = startPosition
+
+        if let component = building.component(ofType: TextureComponent.self) {
+            component.position = startPosition
+        }
+        self.entityManager.insert(building)
+
+        guard let firstUnit = initialCamp.templates.availableCharacters.first else {
+            return
+        }
+
+        let unit = Character(template: firstUnit, camp: initialCamp, entityManager: entityManager)
+        if let component = unit.component(ofType: TextureComponent.self) {
+            let unitStartPosition = startPosition.applying(CGAffineTransform(translationX: 20.0, y: 0.0))
+            component.position = unitStartPosition
+        }
+        self.entityManager.insert(unit)
     }
 
     func updateBorderTracking(on view: NSView) {
@@ -139,7 +152,18 @@ class GameScene: SKScene {
             self.selectedObject = selectedEntity
         } else {
             self.selectedObject = nil
-            self.debugText = "empty location : \(event.locationInWindow) (x: \(location.x), y : \(location.y))"
+            self.debugText = "empty location : \(event.locationInWindow) \(location)"
+        }
+    }
+
+    override func rightMouseUp(with event: NSEvent) {
+        // do the prior action with the selected element
+        guard let selectedEntity = self.selectedObject else {
+            return
+        }
+        let location = event.location(in: self)
+        if let moveComponent = selectedEntity.component(ofType: MoveableComponent.self) {
+            moveComponent.destination = location
         }
     }
     

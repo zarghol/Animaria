@@ -20,6 +20,7 @@
 		185354FB20C41BD100336A51 /* Ids.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185354FA20C41BD100336A51 /* Ids.swift */; };
 		185354FD20C41C6700336A51 /* DataProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185354FC20C41C6700336A51 /* DataProvider.swift */; };
 		185354FF20C438EA00336A51 /* Camp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 185354FE20C438EA00336A51 /* Camp.swift */; };
+		1853EBED20CAF7F700700CF7 /* MoveableComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1853EBEC20CAF7F700700CF7 /* MoveableComponent.swift */; };
 		18715A1320B892B800059D0D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18715A1220B892B800059D0D /* AppDelegate.swift */; };
 		18715A1520B892B800059D0D /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18715A1420B892B800059D0D /* GameScene.sks */; };
 		18715A1720B892B800059D0D /* Actions.sks in Resources */ = {isa = PBXBuildFile; fileRef = 18715A1620B892B800059D0D /* Actions.sks */; };
@@ -72,6 +73,7 @@
 		185354FA20C41BD100336A51 /* Ids.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ids.swift; sourceTree = "<group>"; };
 		185354FC20C41C6700336A51 /* DataProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataProvider.swift; sourceTree = "<group>"; };
 		185354FE20C438EA00336A51 /* Camp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Camp.swift; sourceTree = "<group>"; };
+		1853EBEC20CAF7F700700CF7 /* MoveableComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoveableComponent.swift; sourceTree = "<group>"; };
 		18715A0F20B892B800059D0D /* Animaria.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Animaria.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		18715A1220B892B800059D0D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		18715A1420B892B800059D0D /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 			isa = PBXGroup;
 			children = (
 				18715A4020B8E04200059D0D /* TextureComponent.swift */,
+				1853EBEC20CAF7F700700CF7 /* MoveableComponent.swift */,
 				18BA454720B9B7BD00E56E6F /* NamingComponent.swift */,
 				18BA455620B9FB1B00E56E6F /* LifeComponent.swift */,
 				182DF2E520BA2FD700B8B322 /* CampComponent.swift */,
@@ -352,6 +355,7 @@
 				182DF2E620BA2FD700B8B322 /* CampComponent.swift in Sources */,
 				182DF2E820BA309500B8B322 /* MainEntityComponent.swift in Sources */,
 				182DF2EC20BA372600B8B322 /* StartPositionComponent.swift in Sources */,
+				1853EBED20CAF7F700700CF7 /* MoveableComponent.swift in Sources */,
 				1825879020BB60D900E0E1D1 /* SkillCell.swift in Sources */,
 				18BA454C20B9BBB000E56E6F /* ScreenBorderType.swift in Sources */,
 				185354F920C41BAD00336A51 /* Types.swift in Sources */,

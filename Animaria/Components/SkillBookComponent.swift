@@ -81,6 +81,10 @@ class SkillBookComponent: GKComponent {
     func stopCurrentSkill() {
         currentSkill?.currentTime = 0.0
         currentSkill = nil
+
+        if let moveComponent = self.entity?.component(ofType: MoveableComponent.self) {
+            moveComponent.destination = nil
+        }
     }
     
     private func ensureResources(time: TimeInterval, requiredResources: [Resource: Int], availableResources: [Resource: Int]) -> ResourceStatus {

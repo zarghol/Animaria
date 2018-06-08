@@ -60,12 +60,22 @@ extension CGVector {
     }
 }
 
+extension vector_float2 {
+    var pointValue: CGPoint {
+        return CGPoint(x: CGFloat(self.x), y: CGFloat(self.y))
+    }
+}
+
 extension CGPoint {
     static func * (left: CGPoint, right: CGFloat) -> CGPoint {
         var newVector = left
         newVector.x *= right
         newVector.y *= right
         return newVector
+    }
+
+    var vector2_floatValue: vector_float2 {
+        return vector_float2(x: Float(self.x), y: Float(self.y))
     }
 }
 

@@ -13,10 +13,10 @@ import GameplayKit
 class EntityManager {
     lazy var componentSystems: [GKComponentSystem] = {
         let skillBookSystem = GKComponentSystem(componentClass: SkillBookComponent.self)
-//        let reproductionSystem = GKComponentSystem(componentClass: CloningReproductionComponent<Grass>.self)
+        let moveSystem = GKComponentSystem(componentClass: MoveableComponent.self)
 //        let energyStorageSystem = GKComponentSystem(componentClass: EnergyAccumulatorComponent.self)
 //        return [photosynthesisSystem, energyStorageSystem, reproductionSystem]
-        return [skillBookSystem]
+        return [skillBookSystem, moveSystem]
     }()
     
     var toAdd = Set<GKEntity>()

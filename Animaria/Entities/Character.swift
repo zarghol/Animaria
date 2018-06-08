@@ -71,10 +71,11 @@ class Character: TempletableEntity<CharacterTemplate> {
         super.init(template: template)
         self.addComponent(NamingComponent(name: template.name, description: template.description))
         let texture = SKTexture(imageNamed: "\(template.race)/\(template.name)")
-        self.addComponent(TextureComponent(texture: texture, size: texture.size()))
+        let textureComponent = TextureComponent(texture: texture, size: texture.size())
+        self.addComponent(textureComponent)
         self.addComponent(LifeComponent(maxLife: template.maxLife))
         self.addComponent(CampComponent(camp: camp))
-        // TODO: add Moveable Component
+        self.addComponent(MoveableComponent(positionComponent: textureComponent, speed: 300.0, acceleration: 100.0))
         let skills = RaceRepository.all.skills(for: template.race)
 
         self.addComponent(SkillBookComponent(templates: skills.subset(filterPath: \SkillTemplate.id, values: template.skillsIds), entityManager: entityManager))

@@ -52,3 +52,20 @@ class TextureComponent: GKComponent {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+extension TextureComponent: GKAgentDelegate {
+
+    func agentWillUpdate(_ agent: GKAgent) {
+        if let agent = agent as? GKAgent2D {
+            agent.position = self.position.vector2_floatValue
+            agent.rotation = Float(self.sprite.zRotation)
+        }
+    }
+    
+    func agentDidUpdate(_ agent: GKAgent) {
+        if let agent = agent as? GKAgent2D {
+            self.position = agent.position.pointValue
+            self.sprite.zRotation = CGFloat(agent.rotation)
+        }
+    }
+}

@@ -19,8 +19,6 @@ extension SkillBookComponent: NSCollectionViewDataSource {
         let skill = self.skills[indexPath.item]
         
         let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SkillCell"), for: indexPath)
-
-//        NSImage.Name(
         item.imageView?.image = NSImage(named: skill.template.id.rawValue)
         
         return item
@@ -70,11 +68,7 @@ class ViewController: NSViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        
-        // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
-        // including entities and graphs.
-        // Get the SKScene from the loaded GKScene
+
         guard let scene = GKScene(fileNamed: "GameScene"),
               let sceneNode = scene.rootNode as? GameScene else {
             return
@@ -89,21 +83,14 @@ class ViewController: NSViewController {
         self.entityManager = EntityManager(scene: sceneNode, minimapScene: sceneNode.minimapScene)
         sceneNode.entityManager = self.entityManager
         sceneNode.startPositions = startPositions
-        // Copy gameplay related content over to the scene
-        //                sceneNode.entities = scene.entities
-        //                sceneNode.graphs = scene.graphs
-        //
+
         // Set the scale mode to scale to fit the window
         sceneNode.scaleMode = .aspectFill
         
         // Present the scene
         if let view = self.skView {
             view.presentScene(sceneNode)
-            
             view.ignoresSiblingOrder = true
-            
-            view.showsFPS = true
-            view.showsNodeCount = true
         }
 
         if let minView = self.minimapView {
@@ -220,6 +207,8 @@ class ViewController: NSViewController {
 
 extension ViewController: NSCollectionViewDelegate {
     func collectionView(_ collectionView: NSCollectionView, didSelectItemsAt indexPaths: Set<IndexPath>) {
+        collectionView.deselectItems(at: indexPaths)
+
         guard let scene = self.skView.scene as? GameScene,
             let selectedEntity = scene.selectedObject,
             let skillsComponent = selectedEntity.component(ofType: SkillBookComponent.self),
