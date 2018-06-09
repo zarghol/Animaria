@@ -61,6 +61,10 @@ class GameScene: SKScene {
 
         let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
         self.camera?.position = startPosition
+        if let cameraMinimap = self.minimapScene.childNode(withName: "cameraRect") {
+            let ratio = self.minimapScene.size.height / self.size.height
+            cameraMinimap.position = camera!.position * ratio
+        }
 
         if let component = building.component(ofType: TextureComponent.self) {
             component.position = startPosition
@@ -209,7 +213,7 @@ class GameScene: SKScene {
         }
 //        self.debugText = "camera.position = \(camera.position)"
         if let border = self.moveBorder {
-            // si la camera touche le bord selon la border, on bouge aps
+            // si la camera touche le bord selon la border, on bouge pas
             let cameraWidth = camera.xScale * self.size.width
             let cameraHeight = cameraWidth * view.frame.size.height / view.frame.size.width
 
@@ -220,8 +224,10 @@ class GameScene: SKScene {
                 height: cameraHeight
             )
             
-            // cameraHeight ==> view.frame.size.height
-            // x ===> 200.0
+            if let cameraMinimap = self.minimapScene.childNode(withName: "cameraRect") {
+                let ratio = self.minimapScene.size.height / self.size.height
+                cameraMinimap.position = camera.position * ratio
+            }
             
             let uiHeight = 200.0 * cameraHeight / view.frame.size.height
 //            self.debugText = "\(cameraFrame)"
@@ -242,12 +248,13 @@ class GameScene: SKScene {
         }
     }
 
-    func createMinimap(with viewHeight: Int) {
+    func createMinimap(with viewHeight: Int, originalMapSize: CGSize) {
         let minimapScene = SKScene(size: CGSize(width: viewHeight, height: viewHeight))
 
+        let ratio = self.size.height / CGFloat(viewHeight)
         for index in 0..<(viewHeight * viewHeight) {
             let minimapCoord = CGPoint(x: index % viewHeight, y: index / viewHeight)
-            let realCoord = minimapCoord * (self.size.height / CGFloat(viewHeight))
+            let realCoord = minimapCoord * ratio
 
             let color = self.determineBackground(for: realCoord)?.color ?? .clear
 
@@ -255,6 +262,18 @@ class GameScene: SKScene {
             colorNode.position = minimapCoord
             minimapScene.addChild(colorNode)
         }
+
+        let cameraWidth = camera!.xScale * self.size.width
+        let cameraHeight = cameraWidth * originalMapSize.height / originalMapSize.width
+        let cameraSize = CGSize(width: cameraWidth, height: cameraHeight)
+        let size = cameraSize / ratio
+        let cameraRect = SKShapeNode(rectOf: size)
+        cameraRect.strokeColor = .black
+        cameraRect.fillColor = .clear
+        cameraRect.position = .zero
+        cameraRect.name = "cameraRect"
+        cameraRect.position = camera!.position / ratio
+        minimapScene.addChild(cameraRect)
 
         self.minimapScene = minimapScene
     }

@@ -78,7 +78,7 @@ class ViewController: NSViewController {
             .compactMap { $0.component(ofType: GKSKNodeComponent.self)?.node.position }
 
         TextureComponent.minimapRatio = minimapView.frame.size.height / sceneNode.size.height
-        sceneNode.createMinimap(with: Int(minimapView.frame.size.height))
+        sceneNode.createMinimap(with: Int(minimapView.frame.size.height), originalMapSize: self.skView.frame.size)
 
         self.entityManager = EntityManager(scene: sceneNode, minimapScene: sceneNode.minimapScene)
         sceneNode.entityManager = self.entityManager

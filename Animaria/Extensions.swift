@@ -74,8 +74,24 @@ extension CGPoint {
         return newVector
     }
 
+    static func / (left: CGPoint, right: CGFloat) -> CGPoint {
+        var newVector = left
+        newVector.x /= right
+        newVector.y /= right
+        return newVector
+    }
+
     var vector2_floatValue: vector_float2 {
         return vector_float2(x: Float(self.x), y: Float(self.y))
+    }
+}
+
+extension CGSize {
+    static func / (left: CGSize, right: CGFloat) -> CGSize {
+        var newVector = left
+        newVector.height /= right
+        newVector.width /= right
+        return newVector
     }
 }
 
