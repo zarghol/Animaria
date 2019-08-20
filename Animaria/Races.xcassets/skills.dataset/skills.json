@@ -22,5 +22,14 @@
     "requiredTitle": null,
     "energyQuantity": 0.0,
     "cooldown": 0.0
+  },
+  {
+    "id": "base_2",
+    "name": "harvest",
+    "description": "récolte la ressource désignée.",
+    "type": "basic",
+    "requiredTitle": null,
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
   }
 ]

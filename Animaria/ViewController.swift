@@ -10,21 +10,6 @@ import Cocoa
 import SpriteKit
 import GameplayKit
 
-extension SkillBookComponent: NSCollectionViewDataSource {
-    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
-        return section == 0 ? self.skills.count : 0
-    }
-    
-    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
-        let skill = self.skills[indexPath.item]
-        
-        let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SkillCell"), for: indexPath)
-        item.imageView?.image = NSImage(named: skill.template.id.rawValue)
-        
-        return item
-    }
-}
-
 class ViewController: NSViewController {
 
     @IBOutlet var skView: SKView!
@@ -103,7 +88,7 @@ class ViewController: NSViewController {
             self.updateResources()
         }
         self.updateResources()
-        
+
         NotificationCenter.default.addObserver(self, selector: #selector(updateInterface), name: GameScene.SelectedObjectNotificationName, object: sceneNode)
     }
 
@@ -202,6 +187,15 @@ class ViewController: NSViewController {
             return
         }
         self.view.window?.delegate = scene
+    }
+
+    @IBAction func filterSkills(sender: NSSegmentedControl) {
+        guard let skillsDatasource = self.skillsCollectionView.dataSource as? SkillBookComponent else {
+            return
+        }
+
+        skillsDatasource.applyFilter(index: sender.selectedSegment)
+        self.skillsCollectionView.reloadData()
     }
 }
 

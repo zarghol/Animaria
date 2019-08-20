@@ -47,6 +47,7 @@
 		18BA455720B9FB1B00E56E6F /* LifeComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BA455620B9FB1B00E56E6F /* LifeComponent.swift */; };
 		18BA455920B9FF3900E56E6F /* Race.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18BA455820B9FF3900E56E6F /* Race.swift */; };
 		18BA455B20BA030900E56E6F /* Races.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 18BA455A20BA030900E56E6F /* Races.xcassets */; };
+		18CB249820DA754500FFD1D6 /* ResourceComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18CB249720DA754500FFD1D6 /* ResourceComponent.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,6 +106,7 @@
 		18BA455620B9FB1B00E56E6F /* LifeComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LifeComponent.swift; sourceTree = "<group>"; };
 		18BA455820B9FF3900E56E6F /* Race.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Race.swift; sourceTree = "<group>"; };
 		18BA455A20BA030900E56E6F /* Races.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Races.xcassets; sourceTree = "<group>"; };
+		18CB249720DA754500FFD1D6 /* ResourceComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourceComponent.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -207,6 +209,7 @@
 				182DF2E720BA309500B8B322 /* MainEntityComponent.swift */,
 				182DF2EB20BA372600B8B322 /* StartPositionComponent.swift */,
 				18089B0720BA52600033D12A /* SkillBookComponent.swift */,
+				18CB249720DA754500FFD1D6 /* ResourceComponent.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -274,11 +277,11 @@
 				TargetAttributes = {
 					18715A0E20B892B800059D0D = {
 						CreatedOnToolsVersion = 9.3.1;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1100;
 					};
 					18715A2620B892B900059D0D = {
 						CreatedOnToolsVersion = 9.3.1;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1100;
 						TestTargetID = 18715A0E20B892B800059D0D;
 					};
 				};
@@ -333,6 +336,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				18CB249820DA754500FFD1D6 /* ResourceComponent.swift in Sources */,
 				18BA454820B9B7BD00E56E6F /* NamingComponent.swift in Sources */,
 				18715A1B20B892B800059D0D /* ViewController.swift in Sources */,
 				18089B0620BA4F210033D12A /* Title.swift in Sources */,
@@ -524,7 +528,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = clement.nonn.Animaria;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -543,7 +547,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = clement.nonn.Animaria;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -563,7 +567,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = clement.nonn.AnimariaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Animaria.app/Contents/MacOS/Animaria";
 			};
 			name = Debug;
@@ -584,7 +588,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = clement.nonn.AnimariaTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
+				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Animaria.app/Contents/MacOS/Animaria";
 			};
 			name = Release;

@@ -29,15 +29,6 @@ extension Int {
     }
 }
 
-extension Array {
-    var randomValue: Element? {
-        guard self.count > 0 else {
-            return nil
-        }
-        return self[Int.random(in: 0..<self.count)]
-    }
-}
-
 extension SKView {
     open override func scrollWheel(with event: NSEvent) {
         self.scene?.scrollWheel(with: event)

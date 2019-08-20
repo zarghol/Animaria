@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14854.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -620,7 +620,7 @@
                                         <menuItem title="Show Sidebar" keyEquivalent="s" id="kIP-vf-haE">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
-                                                <action selector="toggleSourceList:" target="Ady-hI-5gd" id="iwa-gc-5KM"/>
+                                                <action selector="toggleSidebar:" target="Ady-hI-5gd" id="iwa-gc-5KM"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Enter Full Screen" keyEquivalent="f" id="4J7-dP-txa">
@@ -754,7 +754,7 @@
                                             <color key="fillColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         </box>
                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rPK-6Y-V7q">
-                                            <rect key="frame" x="647" y="154" width="156" height="24"/>
+                                            <rect key="frame" x="647" y="155" width="156" height="23"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Aucune Sélection" id="Anz-3g-44k">
                                                 <font key="font" size="20" name=".AppleSystemUIFont"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -762,7 +762,7 @@
                                             </textFieldCell>
                                         </textField>
                                         <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" translatesAutoresizingMaskIntoConstraints="NO" id="hy2-8C-NX5">
-                                            <rect key="frame" x="647" y="129" width="117" height="17"/>
+                                            <rect key="frame" x="647" y="131" width="117" height="16"/>
                                             <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Pas de description" id="Jfn-bo-ip9">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -773,7 +773,7 @@
                                             <rect key="frame" x="1992" y="8" width="0.0" height="182"/>
                                         </stackView>
                                         <button horizontalHuggingPriority="750" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Q1N-NB-eRP">
-                                            <rect key="frame" x="196" y="175" width="29" height="25"/>
+                                            <rect key="frame" x="197" y="175" width="27" height="25"/>
                                             <buttonCell key="cell" type="disclosure" bezelStyle="roundedDisclosure" imagePosition="only" alignment="center" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="X1N-bF-xCH">
                                                 <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                                                 <font key="font" metaFont="system"/>
@@ -814,26 +814,29 @@
                                                 </subviews>
                                                 <color key="backgroundColor" white="0.0" alpha="0.1991117294520548" colorSpace="calibratedWhite"/>
                                             </clipView>
-                                            <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" horizontal="YES" id="0Bh-SX-HCG">
+                                            <scroller key="horizontalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" horizontal="YES" id="0Bh-SX-HCG">
                                                 <rect key="frame" x="0.0" y="182" width="400" height="16"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
-                                            <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="ZGJ-NW-35I">
+                                            <scroller key="verticalScroller" hidden="YES" wantsLayer="YES" verticalHuggingPriority="750" doubleValue="1" horizontal="NO" id="ZGJ-NW-35I">
                                                 <rect key="frame" x="234" y="1" width="15" height="143"/>
                                                 <autoresizingMask key="autoresizingMask"/>
                                             </scroller>
                                         </scrollView>
                                         <segmentedControl verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="KsB-SV-8KX">
-                                            <rect key="frame" x="1589" y="175" width="323" height="24"/>
+                                            <rect key="frame" x="1588" y="175" width="324" height="24"/>
                                             <segmentedCell key="cell" borderStyle="border" alignment="left" segmentDistribution="fill" style="rounded" trackingMode="selectOne" id="imW-mV-VON">
                                                 <font key="font" metaFont="system"/>
                                                 <segments>
                                                     <segment label="Attaques" width="88"/>
-                                                    <segment label="Construction" width="87" selected="YES" tag="1"/>
+                                                    <segment label="Construction" width="87" tag="1"/>
                                                     <segment label="Basiques" width="87"/>
-                                                    <segment label="Tous"/>
+                                                    <segment label="Tous" selected="YES"/>
                                                 </segments>
                                             </segmentedCell>
+                                            <connections>
+                                                <action selector="filterSkillsWithSender:" target="XfG-lQ-9wD" id="kf7-LP-OOz"/>
+                                            </connections>
                                         </segmentedControl>
                                         <box boxType="custom" titlePosition="noTitle" translatesAutoresizingMaskIntoConstraints="NO" id="DhZ-vR-YES">
                                             <rect key="frame" x="1499" y="0.0" width="1" height="198"/>
@@ -850,7 +853,7 @@
                                             <rect key="frame" x="821" y="19" width="563" height="20"/>
                                         </progressIndicator>
                                         <textField hidden="YES" horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Snc-De-CDS">
-                                            <rect key="frame" x="819" y="46" width="139" height="17"/>
+                                            <rect key="frame" x="819" y="46" width="139" height="16"/>
                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Construction en cours" id="f5t-HS-62Y">
                                                 <font key="font" metaFont="system"/>
                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -889,7 +892,7 @@
                                                             </constraints>
                                                         </progressIndicator>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="rbO-uA-1xo">
-                                                            <rect key="frame" x="77" y="7" width="48" height="17"/>
+                                                            <rect key="frame" x="78" y="7" width="48" height="16"/>
                                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 / 200" id="HhP-Wh-ElD">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -927,7 +930,7 @@
                                                             </constraints>
                                                         </progressIndicator>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hnQ-Ri-UB4">
-                                                            <rect key="frame" x="77" y="6" width="48" height="17"/>
+                                                            <rect key="frame" x="78" y="7" width="48" height="16"/>
                                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 / 200" id="vJs-oM-xjn">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
@@ -965,7 +968,7 @@
                                                             </constraints>
                                                         </progressIndicator>
                                                         <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="47R-M2-9F0">
-                                                            <rect key="frame" x="77" y="6" width="48" height="17"/>
+                                                            <rect key="frame" x="78" y="7" width="48" height="16"/>
                                                             <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="0 / 200" id="Axg-HR-arq">
                                                                 <font key="font" metaFont="system"/>
                                                                 <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>

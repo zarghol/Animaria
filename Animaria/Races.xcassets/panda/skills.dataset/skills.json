@@ -11,5 +11,18 @@
     "requiredTitle": null,
     "energyQuantity": 0.0,
     "cooldown": 0.0
+  },
+  {
+    "id": "panda_1",
+    "name": "Foyer",
+    "description": "Construit un Foyer de pandas",
+    "type": {
+      "type": "building",
+      "unitType": "building",
+      "id": 0
+    },
+    "requiredTitle": null,
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
   }
 ]

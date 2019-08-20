@@ -25,8 +25,10 @@ class MoveableComponent: GKAgent2D {
         didSet {
             if let destination = destination {
                 self.behavior?.removeAllGoals()
-                let goal = GKGoal(toSeekAgent: TargetAgent(position: destination))
-                self.behavior = GKBehavior(weightedGoals: [goal: 1.0])
+                let seekGoal = GKGoal(toSeekAgent: TargetAgent(position: destination))
+                let agents = entityManager.allTextures.map { TargetAgent(position: $0.position) }
+                let avoidGoal = GKGoal(toAvoid: agents, maxPredictionTime: 1.0)
+                self.behavior = GKBehavior(weightedGoals: [seekGoal: 0.8, avoidGoal: 1.0])
                 self.maxAcceleration = possibleAcceleration
             } else {
                 self.behavior?.removeAllGoals()
@@ -37,9 +39,11 @@ class MoveableComponent: GKAgent2D {
     }
 
     private var possibleAcceleration: Float
+    private unowned var entityManager: EntityManager
 
-    init(positionComponent: TextureComponent, speed: Float, acceleration: Float) {
+    init(positionComponent: TextureComponent, speed: Float, acceleration: Float, entityManager: EntityManager) {
         self.possibleAcceleration = acceleration
+        self.entityManager = entityManager
         super.init()
         self.radius = Float(positionComponent.sprite.size.height / 2) // TODO: use pythagore to compute the radius
         self.position = positionComponent.position.vector2_floatValue

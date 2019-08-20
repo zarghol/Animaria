@@ -62,7 +62,7 @@ class EntityManager {
     
     func update(deltaTime seconds: TimeInterval) {
         self.componentSystems.forEach { $0.update(deltaTime: seconds) }
-        
+
         for entity in self.toRemove {
             for system in self.componentSystems {
                 system.removeComponent(foundIn: entity)
@@ -70,8 +70,12 @@ class EntityManager {
         }
         toRemove.removeAll()
         
-        self.toAdd.forEach { self.insert($0) }
+        toAdd.forEach { self.insert($0) }
         
         toAdd.removeAll()
+    }
+
+    var allTextures: [TextureComponent] {
+        return entities.lazy.compactMap { $0.component(ofType: TextureComponent.self) }
     }
 }

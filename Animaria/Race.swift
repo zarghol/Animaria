@@ -99,5 +99,3 @@ struct RaceRepository {
         return self.races[race]
     }
 }
-
-

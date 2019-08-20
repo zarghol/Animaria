@@ -59,7 +59,7 @@ class GameScene: SKScene {
 
         let building = Building(template: mainBuilding, camp: initialCamp, isMain: true, entityManager: entityManager)
 
-        let startPosition = self.startPositions.randomValue ?? CGPoint(x: 1500, y: 1500)
+        let startPosition = self.startPositions.randomElement() ?? CGPoint(x: 1500, y: 1500)
         self.camera?.position = startPosition
         if let cameraMinimap = self.minimapScene.childNode(withName: "cameraRect") {
             let ratio = self.minimapScene.size.height / self.size.height
@@ -166,6 +166,19 @@ class GameScene: SKScene {
             return
         }
         let location = event.location(in: self)
+
+        if let clickedEntity = self.nodes(at: location).filter ({ $0 is SKSpriteNode }).first?.entity {
+            if let resourceComponent = clickedEntity.component(ofType: ResourceComponent.self), resourceComponent.amount > 0 {
+                print("go and harvest !")
+            } else {
+                print("go ?")
+                go(selectedEntity, to: location)
+            }
+        } else {
+            go(selectedEntity, to: location)
+        }
+    }
+    func go(_ selectedEntity: GKEntity, to location: CGPoint) {
         if let moveComponent = selectedEntity.component(ofType: MoveableComponent.self) {
             moveComponent.destination = location
         }

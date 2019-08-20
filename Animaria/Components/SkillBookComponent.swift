@@ -18,9 +18,37 @@ enum ResourceStatus {
     case ok, needTime, needStockedResources([Resource])
 }
 
+enum SkillFilter {
+    case all
+    case building
+    case attacks
+    case basic
+
+    func accept(_ skill: Skill) -> Bool {
+        switch (self, skill.template.type) {
+        case (.all, _):
+            return true
+        case (.building ,.building(type: _, id: _)):
+            return true
+
+        case (.attacks, .direct(_)): // TODO: re-write this filter
+            return true
+
+        case (.basic, .basic):
+            return true
+
+        default:
+            return false
+        }
+    }
+}
+
 class SkillBookComponent: GKComponent {
     let skills: [Skill]
     var currentSkill: Skill?
+    var filter: SkillFilter = .all
+
+    var filteredSkills: [Skill] { self.skills.filter(filter.accept) }
 
     unowned var entityManager: EntityManager
 
@@ -38,13 +66,19 @@ class SkillBookComponent: GKComponent {
         guard self.currentSkill == nil else {
             return
         }
-//        guard let entity = self.entity else {
-//            return
-//        }
 
 //        skill.execute(with: entity)
         switch skill.template.type {
         case .basic:
+            switch skill.template.id {
+            case .base_2: // harvest
+                // TODO: wait for click on resource (put in wait the skill ??)
+                break
+
+            default:
+                break
+            }
+
             break
         case .building(_, _):
             guard let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
@@ -151,12 +185,46 @@ class SkillBookComponent: GKComponent {
                 }
                 positionComponent.position = positionToBuild
             }
-            self.entityManager.insert(entity)
+            self.entityManager.toAdd.insert(entity)
             self.stopCurrentSkill()
         }
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+import Cocoa
+
+extension SkillBookComponent: NSCollectionViewDataSource {
+    func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
+        return section == 0 ? self.filteredSkills.count : 0
+    }
+
+    func collectionView(_ collectionView: NSCollectionView, itemForRepresentedObjectAt indexPath: IndexPath) -> NSCollectionViewItem {
+        let skill = self.filteredSkills[indexPath.item]
+
+        let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SkillCell"), for: indexPath)
+        item.imageView?.image = NSImage(named: skill.template.id.rawValue)
+
+        return item
+    }
+}
+
+extension SkillBookComponent {
+    func applyFilter(index: Int) {
+        let orderedFilters: [SkillFilter] = [.attacks, .building, .basic, .all]
+        let filterToApply: SkillFilter
+
+        defer { self.filter = filterToApply }
+
+        guard index < orderedFilters.count && index >= 0 else {
+            filterToApply = .all
+            return
+
+        }
+
+        filterToApply = orderedFilters[index]
     }
 }
