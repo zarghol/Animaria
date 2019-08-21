@@ -35,6 +35,7 @@ class GameScene: SKScene {
     }
     
     weak var entityManager: EntityManager!
+    var waitingSkill: Skill?
 
     var minimapScene: SKScene!
 
@@ -81,6 +82,13 @@ class GameScene: SKScene {
             component.position = unitStartPosition
         }
         self.entityManager.insert(unit)
+
+        let tryTree = ResourceEntity(resource: .wood, amount: 100)
+
+        if let component = tryTree.component(ofType: TextureComponent.self) {
+            component.position = CGPoint(x: 1500, y: 1500)
+        }
+        self.entityManager.insert(tryTree)
     }
 
     func updateBorderTracking(on view: NSView) {
@@ -148,15 +156,37 @@ class GameScene: SKScene {
         self.camera?.setScale(scale.contained(in: 0.2..<1))
 //        self.debugText = "\(self.camera?.yScale)"
     }
+
+    // MARK: - Skills
     
     override func mouseUp(with event: NSEvent) {
         let location = event.location(in: self)
         let nodes = self.nodes(at: location).filter { $0 is SKSpriteNode }
         if let selectedEntity = nodes.first?.entity {
-            self.selectedObject = selectedEntity
+            if let waitingSkill = waitingSkill, waitingSkill.template.target == .entity {
+                waitingSkill.target = .entity(selectedEntity)
+                do {
+                    try executeSkill(waitingSkill)
+                } catch {
+                    print("unable to execute skill to late : \(error)")
+                }
+            } else {
+                waitingSkill = nil
+                self.selectedObject = selectedEntity
+            }
         } else {
-            self.selectedObject = nil
-            self.debugText = "empty location : \(event.locationInWindow) \(location)"
+            if let waitingSkill = waitingSkill, waitingSkill.template.target == .position {
+                waitingSkill.target = .position(location)
+                do {
+                    try executeSkill(waitingSkill)
+                } catch {
+                    print("unable to execute skill to late : \(error)")
+                }
+            } else {
+                waitingSkill = nil
+                self.selectedObject = nil
+                self.debugText = "empty location : \(event.locationInWindow) \(location)"
+            }
         }
     }
 
@@ -165,6 +195,11 @@ class GameScene: SKScene {
         guard let selectedEntity = self.selectedObject else {
             return
         }
+
+        if waitingSkill != nil {
+            waitingSkill = nil
+        }
+
         let location = event.location(in: self)
 
         if let clickedEntity = self.nodes(at: location).filter ({ $0 is SKSpriteNode }).first?.entity {
@@ -175,14 +210,45 @@ class GameScene: SKScene {
                 go(selectedEntity, to: location)
             }
         } else {
+            print("go !")
             go(selectedEntity, to: location)
         }
     }
+
     func go(_ selectedEntity: GKEntity, to location: CGPoint) {
         if let moveComponent = selectedEntity.component(ofType: MoveableComponent.self) {
             moveComponent.destination = location
         }
     }
+
+    func executeSkill(_ skill: Skill) throws {
+        guard let selectedEntity = self.selectedObject,
+            let skillsComponent = selectedEntity.component(ofType: SkillBookComponent.self) else {
+                return
+        }
+
+        do {
+            try skillsComponent.execute(skill)
+            NotificationCenter.default.post(name: GameScene.SelectedObjectNotificationName, object: self)
+        } catch SkillError.needTarget {
+            self.waitingSkill = skill
+            throw SkillError.needTarget
+        } catch {
+            throw error
+        }
+    }
+
+    func selectSkill(index: Int) throws {
+        guard let selectedEntity = self.selectedObject,
+            let skillsComponent = selectedEntity.component(ofType: SkillBookComponent.self) else {
+                return
+        }
+        let skill = skillsComponent.filteredSkills[index]
+
+        try executeSkill(skill)
+    }
+
+    // MARK: ----------------------------
     
     override func mouseMoved(with event: NSEvent) {
         let location = event.location(in: self)

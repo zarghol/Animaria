@@ -12,6 +12,8 @@ enum SkillError: Error {
     case campNotFound(GKEntity?)
     case unitTemplateNotFound(Skill)
     case needResources([Resource])
+    case needTarget
+    case skillAlreadyInProgress
 }
 
 enum ResourceStatus {
@@ -44,7 +46,7 @@ enum SkillFilter {
 }
 
 class SkillBookComponent: GKComponent {
-    let skills: [Skill]
+    private let skills: [Skill]
     var currentSkill: Skill?
     var filter: SkillFilter = .all
 
@@ -63,22 +65,22 @@ class SkillBookComponent: GKComponent {
             self.stopCurrentSkill()
             return
         }
+
         guard self.currentSkill == nil else {
-            return
+            throw SkillError.skillAlreadyInProgress
+        }
+
+        guard skill.isTargetReady else {
+            throw SkillError.needTarget
+        }
+
+        if let moveComponent = self.entity?.component(ofType: MoveableComponent.self) {
+            moveComponent.stopMovement()
         }
 
 //        skill.execute(with: entity)
         switch skill.template.type {
         case .basic:
-            switch skill.template.id {
-            case .base_2: // harvest
-                // TODO: wait for click on resource (put in wait the skill ??)
-                break
-
-            default:
-                break
-            }
-
             break
         case .building(_, _):
             guard let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
@@ -106,18 +108,23 @@ class SkillBookComponent: GKComponent {
             }
 
         case .direct(_):
-            break
+            // TODO: do the stuff of the skill
+            skill.earnExperience()
+
         case .duration(_):
+            self.currentSkill = skill
+            skill.currentTime = 0.0
             break
         }
     }
     
     func stopCurrentSkill() {
         currentSkill?.currentTime = 0.0
+        currentSkill?.target = .none
         currentSkill = nil
 
         if let moveComponent = self.entity?.component(ofType: MoveableComponent.self) {
-            moveComponent.destination = nil
+            moveComponent.stopMovement()
         }
     }
     
@@ -148,6 +155,7 @@ class SkillBookComponent: GKComponent {
             currentSkill.currentTime += seconds
             print("progress : \(currentSkill.progress)")
             do {
+                try self.checkProcess(for: currentSkill)
                 try self.checkBuilding(for: currentSkill)
             } catch {
                 print("checkBuild not succeed : \(error)")
@@ -156,7 +164,19 @@ class SkillBookComponent: GKComponent {
         }
     }
 
+    func checkProcess(for skill: Skill) throws {
+        guard case SkillType.duration(_) = skill.template.type else { return }
+
+        // TODO: do some stuff
+
+        if skill.progress == 1.0 {
+            self.stopCurrentSkill()
+        }
+    }
+
     func checkBuilding(for skill: Skill) throws {
+        guard case SkillType.building(_, _) = skill.template.type else { return }
+
         guard let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
             throw SkillError.campNotFound(self.entity)
         }

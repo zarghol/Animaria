@@ -21,9 +21,6 @@ class ResourceComponent: GKComponent {
     }
 
     required convenience init?(coder aDecoder: NSCoder) {
-        guard let typeString = aDecoder.decodeObject(forKey: "type") as? String, let type = Resource(rawValue: typeString) else {
-            return nil
-        }
-        self.init(amount: aDecoder.decodeInteger(forKey: "amount"), resource: type)
+        fatalError("init(coder:) has not been implemented")
     }
 }

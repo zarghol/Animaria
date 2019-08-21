@@ -18,4 +18,21 @@ extension Resource {
     }
 }
 
+extension Resource {
+    var description: String {
+        switch self {
+        case .crystal:
+            return "Une resource magique pour stocker l'énergie"
+        case .metal:
+            return "Une resource utile pour fabriquer des armes et des équipements avancés"
+        case .wood:
+            return "Une resource de base pour construire les premiers batiments et équipements"
+        case .time:
+            return "Le temps nécessaire pour la construction ou la réalisation"
+        @unknown default:
+            return "Resource inconnue"
+        }
+    }
+}
+
 extension Resource: Decodable, Encodable { }

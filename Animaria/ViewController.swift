@@ -204,18 +204,17 @@ extension ViewController: NSCollectionViewDelegate {
         collectionView.deselectItems(at: indexPaths)
 
         guard let scene = self.skView.scene as? GameScene,
-            let selectedEntity = scene.selectedObject,
-            let skillsComponent = selectedEntity.component(ofType: SkillBookComponent.self),
             let selectedIndexPath = indexPaths.first else {
                 return
         }
-        let skill = skillsComponent.skills[selectedIndexPath.item]
 
         do {
-            try skillsComponent.execute(skill)
-            self.checkSkillProgressDisplayed(skillsComponent: skillsComponent)
-        } catch  SkillError.needResources(let resources) {
+            try scene.selectSkill(index: selectedIndexPath.item)
+        } catch SkillError.needResources(let resources) {
             self.informationLabel.stringValue = "Resources manquantes : \(resources)"
+            self.informationLabel.isHidden = false
+        } catch SkillError.needTarget {
+            self.informationLabel.stringValue = "Sélectionner une cible"
             self.informationLabel.isHidden = false
         } catch {
             print("unable to cast skill : \(error)")

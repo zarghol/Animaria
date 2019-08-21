@@ -3,6 +3,7 @@
     "id": "base_0",
     "name": "stop",
     "description": "arrête l'action en cours.",
+    "target": "none",
     "type": "basic",
     "requiredTitle": null,
     "energyQuantity": 0.0,
@@ -12,6 +13,7 @@
     "id": "base_1",
     "name": "attaque",
     "description": "attaque la cible.",
+    "target": "entity",
     "type": {
       "type": "direct",
       "characteristics": {
@@ -27,6 +29,7 @@
     "id": "base_2",
     "name": "harvest",
     "description": "récolte la ressource désignée.",
+    "target": "entity",
     "type": "basic",
     "requiredTitle": null,
     "energyQuantity": 0.0,

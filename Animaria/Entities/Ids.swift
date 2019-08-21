@@ -9,9 +9,23 @@
 import Foundation
 
 enum SkillId: String, Codable {
-    case base_0, base_1, base_2
-    case panda_0, panda_1
+    // MARK: Basic Skills
 
+    /// Stop
+    case base_0
+    /// Attack
+    case base_1
+    /// Harvest
+    case base_2
+
+    // MARK: Panda Skills
+
+    /// Basic Panda
+    case panda_0
+    /// Panda Home
+    case panda_1
+
+    // MARK: -
     var race: Race? {
         switch self {
         case .base_0, .base_1, .base_2:

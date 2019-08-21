@@ -7,12 +7,26 @@
 //
 
 import Foundation
+import GameplayKit
+
+enum SkillTarget {
+    case none
+    case position(CGPoint)
+    case entity(GKEntity)
+}
+
+enum SkillTemplateTarget: String, Decodable {
+    case none
+    case position
+    case entity
+}
 
 struct SkillTemplate: Decodable {
     let id: SkillId
     let name: String
     let description: String
-    
+
+    let target: SkillTemplateTarget
     let type: SkillType
     let requiredTitle: TitleId?
     let energyQuantity: Double
@@ -42,6 +56,17 @@ class Skill: NSObject {
             didChangeValue(forKey: "progress")
         }
     }
+
+    var target: SkillTarget
+
+    var isTargetReady: Bool {
+        switch (self.target, self.template.target) {
+        case (.none, .none), (.entity(_), .entity), (.position(_), .position):
+            return true
+        default:
+            return false
+        }
+    }
     
     init(template: SkillTemplate, level: Int = 0, experience: Int = 0, currentTime: Double = 0.0) {
         self.progress = 1.0
@@ -49,6 +74,7 @@ class Skill: NSObject {
         self.template = template
         self.experience = experience
         self.currentTime = currentTime
+        self.target = .none
 
         super.init()
     }

@@ -3,6 +3,7 @@
     "id": "panda_0",
     "name": "panda",
     "description": "Produit un panda",
+    "target": "none",
     "type": {
       "type": "building",
       "unitType": "character",
@@ -16,6 +17,7 @@
     "id": "panda_1",
     "name": "Foyer",
     "description": "Construit un Foyer de pandas",
+    "target": "position",
     "type": {
       "type": "building",
       "unitType": "building",
