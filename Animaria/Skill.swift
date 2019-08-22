@@ -15,10 +15,66 @@ enum SkillTarget {
     case entity(GKEntity)
 }
 
-enum SkillTemplateTarget: String, Decodable {
+enum SkillTemplateTarget {
     case none
-    case position
-    case entity
+    case position(distance: CGFloat)
+    case entity(distance: CGFloat)
+
+    var distance: CGFloat {
+        switch self {
+        case .none:
+            return 0.0
+        case .position(let distance):
+            return distance
+        case .entity(let distance):
+            return distance
+        }
+    }
+}
+
+extension SkillTemplateTarget: Decodable {
+    var stringValue: String {
+        switch self {
+            case .none:
+                return "none"
+            case .position(_):
+                return "position"
+            case .entity(_):
+                return "entity"
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case type, distance
+    }
+
+    init(from decoder: Decoder) throws {
+        if let singleContainer = try? decoder.singleValueContainer(),
+            let targetString = try? singleContainer.decode(String.self) {
+            switch targetString {
+            case SkillTemplateTarget.none.stringValue:
+                self = .none
+                return
+            default:
+                throw DecodingError.valueNotFound(SkillType.self, DecodingError.Context(codingPath: [CodingKeys.type], debugDescription: "unknown value for this key : \(targetString)"))
+            }
+        } else {
+            let innerContainer = try decoder.container(keyedBy: CodingKeys.self)
+            let targetString = try innerContainer.decode(String.self, forKey: .type)
+
+            let distance = try innerContainer.decode(CGFloat.self, forKey: .distance)
+            switch targetString {
+            case SkillTemplateTarget.position(distance: 0).stringValue:
+                self = .position(distance: distance)
+                return
+            case SkillTemplateTarget.entity(distance: 0).stringValue:
+                self = .entity(distance: distance)
+                return
+            default:
+                throw DecodingError.valueNotFound(SkillTemplateTarget.self, DecodingError.Context(codingPath: [CodingKeys.type], debugDescription: "unknown value for this key : \(targetString)"))
+            }
+        }
+    }
 }
 
 struct SkillTemplate: Decodable {
@@ -61,14 +117,14 @@ class Skill: NSObject {
 
     var isTargetReady: Bool {
         switch (self.target, self.template.target) {
-        case (.none, .none), (.entity(_), .entity), (.position(_), .position):
+        case (.none, .none), (.entity(_), .entity(_)), (.position(_), .position(_)):
             return true
         default:
             return false
         }
     }
     
-    init(template: SkillTemplate, level: Int = 0, experience: Int = 0, currentTime: Double = 0.0) {
+    init(template: SkillTemplate, level: Int = 1, experience: Int = 0, currentTime: Double = 0.0) {
         self.progress = 1.0
         self.level = level
         self.template = template

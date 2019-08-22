@@ -17,7 +17,10 @@
     "id": "panda_1",
     "name": "Foyer",
     "description": "Construit un Foyer de pandas",
-    "target": "position",
+    "target": {
+      "type": "position",
+      "distance": 50
+    },
     "type": {
       "type": "building",
       "unitType": "building",

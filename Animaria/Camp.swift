@@ -8,6 +8,10 @@
 
 import Cocoa
 
+enum CollectError: Error {
+    case maxQuantityReached(Resource)
+}
+
 class Camp: NSObject {
     let id: Int
     let templates: LoadedRace
@@ -34,9 +38,12 @@ class Camp: NSObject {
         self.availableResources = [Resource: (Int, Int)](uniqueKeysWithValues: Resource.allCases.map { ($0, (0, 200)) })
     }
 
-    func collect(_ resource: Resource, quantity: Int) {
+    func collect(_ resource: Resource, quantity: Int) throws {
         let vals = self.availableResources[resource] ?? (0, 0)
         let newValue = min(vals.current + quantity, vals.max)
+        if newValue == vals.current && newValue == vals.max {
+            throw CollectError.maxQuantityReached(resource)
+        }
         self.availableResources[resource] = (newValue, vals.max)
     }
 

@@ -14,9 +14,8 @@ class EntityManager {
     lazy var componentSystems: [GKComponentSystem] = {
         let skillBookSystem = GKComponentSystem(componentClass: SkillBookComponent.self)
         let moveSystem = GKComponentSystem(componentClass: MoveableComponent.self)
-//        let energyStorageSystem = GKComponentSystem(componentClass: EnergyAccumulatorComponent.self)
-//        return [photosynthesisSystem, energyStorageSystem, reproductionSystem]
-        return [skillBookSystem, moveSystem]
+        let resourceSystem = GKComponentSystem(componentClass: ResourceComponent.self)
+        return [skillBookSystem, moveSystem, resourceSystem]
     }()
     
     var toAdd = Set<GKEntity>()

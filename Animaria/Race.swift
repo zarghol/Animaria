@@ -8,14 +8,10 @@
 
 import Cocoa
 
-enum Race: String {
+enum Race: String, CaseIterable {
     static let key = CodingUserInfoKey(rawValue: "race")!
     
     case panda, teddyBear, tiger, koala, sheep
-    
-    static var allCases: [Race] {
-        return [.panda, .teddyBear, .tiger, .koala, .sheep]
-    }
 }
 extension Race: Codable { }
 

@@ -32,7 +32,17 @@ enum SkillId: String, Codable {
             return nil
         case .panda_0, .panda_1:
             return .panda
-
         }
     }
 }
+
+//extension SkillId {
+//    func execute() {
+//        switch self {
+//        case .base_2:
+//
+//        default:
+//            break
+//        }
+//    }
+//}

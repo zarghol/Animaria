@@ -9,6 +9,7 @@
 import Foundation
 import GameplayKit
 
+infix operator <=>: AdditionPrecedence
 
 extension Int {
     static func random(in range: Range<Int>? = nil) -> Int {
@@ -70,6 +71,13 @@ extension CGPoint {
         newVector.x /= right
         newVector.y /= right
         return newVector
+    }
+
+    static func <=> (left: CGPoint, right: CGPoint) -> CGFloat {
+        let distanceX = left.x - right.x
+        let distanceY = left.y - right.y
+
+        return sqrt(pow(distanceX, 2) + pow(distanceY, 2))
     }
 
     var vector2_floatValue: vector_float2 {

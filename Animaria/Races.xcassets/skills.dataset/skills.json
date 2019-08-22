@@ -13,7 +13,10 @@
     "id": "base_1",
     "name": "attaque",
     "description": "attaque la cible.",
-    "target": "entity",
+    "target": {
+      "type": "entity",
+      "distance": 70
+    },
     "type": {
       "type": "direct",
       "characteristics": {
@@ -29,7 +32,10 @@
     "id": "base_2",
     "name": "harvest",
     "description": "récolte la ressource désignée.",
-    "target": "entity",
+    "target": {
+      "type": "entity",
+      "distance": 50
+    },
     "type": "basic",
     "requiredTitle": null,
     "energyQuantity": 0.0,

@@ -13,6 +13,8 @@ enum SkillError: Error {
     case unitTemplateNotFound(Skill)
     case needResources([Resource])
     case needTarget
+    case invalidTarget
+    case skillNotFound
     case skillAlreadyInProgress
 }
 
@@ -45,12 +47,22 @@ enum SkillFilter {
     }
 }
 
+enum SkillBookCheck {
+    case process, building, position, harvest
+}
+
+enum SkillBookShortcut {
+    case harvest(target: GKEntity)
+}
+
 class SkillBookComponent: GKComponent {
     private let skills: [Skill]
     var currentSkill: Skill?
     var filter: SkillFilter = .all
 
     var filteredSkills: [Skill] { self.skills.filter(filter.accept) }
+
+    var check: SkillBookCheck?
 
     unowned var entityManager: EntityManager
 
@@ -74,13 +86,39 @@ class SkillBookComponent: GKComponent {
             throw SkillError.needTarget
         }
 
+        guard self.checkTargetReachability(for: skill) else {
+            if let movementComponent = self.entity?.component(ofType: MoveableComponent.self) {
+                self.currentSkill = skill
+
+                switch skill.target {
+                case .none:
+                    fatalError("check shoudn't error with none target")
+                case .position(let position):
+                    movementComponent.destination = position
+                case .entity(let entity):
+                    let destination = entity.component(ofType: TextureComponent.self)?.position
+                    movementComponent.destination = destination
+                }
+
+                check = .position
+                return
+            } else {
+                throw SkillError.invalidTarget
+            }
+        }
+
         if let moveComponent = self.entity?.component(ofType: MoveableComponent.self) {
             moveComponent.stopMovement()
         }
 
-//        skill.execute(with: entity)
         switch skill.template.type {
         case .basic:
+            if skill.template.id == .base_2 {
+                currentSkill = skill
+                check = .harvest
+            } else {
+                fatalError("unavailable skill")
+            }
             break
         case .building(_, _):
             guard let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
@@ -100,12 +138,7 @@ class SkillBookComponent: GKComponent {
             
             self.currentSkill = skill
             skill.currentTime = 0.0
-            do {
-                try self.checkBuilding(for: skill)
-                //
-            } catch {
-                self.stopCurrentSkill()
-            }
+            check = .building
 
         case .direct(_):
             // TODO: do the stuff of the skill
@@ -114,6 +147,7 @@ class SkillBookComponent: GKComponent {
         case .duration(_):
             self.currentSkill = skill
             skill.currentTime = 0.0
+            check = .process
             break
         }
     }
@@ -122,6 +156,7 @@ class SkillBookComponent: GKComponent {
         currentSkill?.currentTime = 0.0
         currentSkill?.target = .none
         currentSkill = nil
+        check = nil
 
         if let moveComponent = self.entity?.component(ofType: MoveableComponent.self) {
             moveComponent.stopMovement()
@@ -149,18 +184,69 @@ class SkillBookComponent: GKComponent {
             return .ok
         }
     }
+
+    func checkTargetReachability(for skill: Skill) -> Bool {
+        guard let positionComponent = self.entity?.component(ofType: TextureComponent.self) else {
+            return false
+        }
+        let currentPosition = positionComponent.position
+        switch (skill.target, skill.template.target) {
+        case (.none, .none):
+            return true
+        case (.entity(let targetEntity), .entity(let distance)):
+            guard let targetPosition = targetEntity.component(ofType: TextureComponent.self)?.position else { return false }
+            return targetPosition <=> currentPosition <= distance
+        case (.position(let targetPosition), .position(let distance)):
+            return targetPosition <=> currentPosition <= distance
+        default:
+            return false
+        }
+    }
     
     override func update(deltaTime seconds: TimeInterval) {
-        if let currentSkill = self.currentSkill {
-            currentSkill.currentTime += seconds
-            print("progress : \(currentSkill.progress)")
-            do {
-                try self.checkProcess(for: currentSkill)
+        guard let check = check else { return }
+
+        guard let currentSkill = self.currentSkill else { return }
+
+        do {
+            switch check {
+            case .position:
+                if checkTargetReachability(for: currentSkill) {
+                    self.currentSkill = nil
+                    self.check = nil
+                    try self.execute(currentSkill)
+                }
+
+            case .harvest:
+                guard currentSkill.template.id == .base_2 else { return }
+
+                guard case SkillTarget.entity(let entity) = currentSkill.target,
+                    let resourceComponent = entity.component(ofType: ResourceComponent.self),
+                    let camp = self.entity?.component(ofType: CampComponent.self)?.camp else {
+                        self.stopCurrentSkill()
+                        return
+                }
+                let quantity = 1
+                let harvested = resourceComponent.collect(quantity: quantity)
+
+                do {
+                    try camp.collect(resourceComponent.resourceType, quantity: harvested)
+                    currentSkill.earnExperience()
+                } catch {
+                    print("max resource reached. Stop Collecting")
+                    self.stopCurrentSkill()
+                }
+
+            case .building:
+                currentSkill.currentTime += seconds
                 try self.checkBuilding(for: currentSkill)
-            } catch {
-                print("checkBuild not succeed : \(error)")
-                self.currentSkill = nil
+            case .process:
+                currentSkill.currentTime += seconds
+                try self.checkProcess(for: currentSkill)
             }
+        } catch {
+            print("update not succeed : \(error)")
+            self.stopCurrentSkill()
         }
     }
 
@@ -170,6 +256,7 @@ class SkillBookComponent: GKComponent {
         // TODO: do some stuff
 
         if skill.progress == 1.0 {
+            skill.earnExperience()
             self.stopCurrentSkill()
         }
     }
@@ -198,20 +285,40 @@ class SkillBookComponent: GKComponent {
 
             if let positionComponent = entity.component(ofType: TextureComponent.self) {
                 let positionToBuild: CGPoint
-                if let builderFrame = self.entity?.component(ofType: TextureComponent.self)?.sprite.frame {
-                    positionToBuild = CGPoint(x: builderFrame.midX, y: builderFrame.minY - positionComponent.sprite.size.height / 2)
+                if case SkillTarget.position(let point) = skill.target {
+                    positionToBuild = point
                 } else {
-                    positionToBuild = .zero
+                    fatalError("shouldn't reach this point without a target point")
+//                    if let builderFrame = self.entity?.component(ofType: TextureComponent.self)?.sprite.frame {
+//
+//                        positionToBuild = CGPoint(x: builderFrame.midX, y: builderFrame.minY - positionComponent.sprite.size.height / 2)
+//                    } else {
+//                        positionToBuild = .zero
+//                    }
                 }
                 positionComponent.position = positionToBuild
             }
             self.entityManager.toAdd.insert(entity)
+            skill.earnExperience()
             self.stopCurrentSkill()
         }
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension SkillBookComponent {
+    func execute(shortcut: SkillBookShortcut) throws {
+        switch shortcut {
+        case .harvest(let target):
+            guard let harvestSkill = self.skills.first(where: { $0.template.id == .base_2 }) else {
+                throw SkillError.skillNotFound
+            }
+            harvestSkill.target = .entity(target)
+            try self.execute(harvestSkill)
+        }
     }
 }
 

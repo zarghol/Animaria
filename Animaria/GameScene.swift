@@ -49,9 +49,14 @@ class GameScene: SKScene {
             return
         }
         let initialCamp = Camp(id: 0, race: pandas)
-        initialCamp.collect(.wood, quantity: 100)
-        initialCamp.collect(.metal, quantity: 10)
-        initialCamp.collect(.crystal, quantity: 5)
+        do {
+            try initialCamp.collect(.wood, quantity: 100)
+            try initialCamp.collect(.metal, quantity: 10)
+            try initialCamp.collect(.crystal, quantity: 5)
+        } catch {
+            print("couldn't initialize resources for camp")
+        }
+
         camps.append(initialCamp)
         self.playerCamp = initialCamp
         guard let mainBuilding = initialCamp.templates.availableBuildings.first else {
@@ -60,7 +65,7 @@ class GameScene: SKScene {
 
         let building = Building(template: mainBuilding, camp: initialCamp, isMain: true, entityManager: entityManager)
 
-        let startPosition = self.startPositions.randomElement() ?? CGPoint(x: 1500, y: 1500)
+        let startPosition = self.startPositions.randomElement() ?? CGPoint(x: 6250, y: 6250)
         self.camera?.position = startPosition
         if let cameraMinimap = self.minimapScene.childNode(withName: "cameraRect") {
             let ratio = self.minimapScene.size.height / self.size.height
@@ -83,10 +88,10 @@ class GameScene: SKScene {
         }
         self.entityManager.insert(unit)
 
-        let tryTree = ResourceEntity(resource: .wood, amount: 100)
+        let tryTree = ResourceEntity(resource: .wood, amount: 100, entityManager: entityManager)
 
         if let component = tryTree.component(ofType: TextureComponent.self) {
-            component.position = CGPoint(x: 1500, y: 1500)
+            component.position = CGPoint(x: 6250, y: 6250)
         }
         self.entityManager.insert(tryTree)
     }
@@ -163,7 +168,7 @@ class GameScene: SKScene {
         let location = event.location(in: self)
         let nodes = self.nodes(at: location).filter { $0 is SKSpriteNode }
         if let selectedEntity = nodes.first?.entity {
-            if let waitingSkill = waitingSkill, waitingSkill.template.target == .entity {
+            if let waitingSkill = waitingSkill, case SkillTemplateTarget.entity(_) = waitingSkill.template.target {
                 waitingSkill.target = .entity(selectedEntity)
                 do {
                     try executeSkill(waitingSkill)
@@ -175,7 +180,7 @@ class GameScene: SKScene {
                 self.selectedObject = selectedEntity
             }
         } else {
-            if let waitingSkill = waitingSkill, waitingSkill.template.target == .position {
+            if let waitingSkill = waitingSkill, case SkillTemplateTarget.position(_) = waitingSkill.template.target {
                 waitingSkill.target = .position(location)
                 do {
                     try executeSkill(waitingSkill)
@@ -205,8 +210,13 @@ class GameScene: SKScene {
         if let clickedEntity = self.nodes(at: location).filter ({ $0 is SKSpriteNode }).first?.entity {
             if let resourceComponent = clickedEntity.component(ofType: ResourceComponent.self), resourceComponent.amount > 0 {
                 print("go and harvest !")
+                do {
+                    try selectedEntity.component(ofType: SkillBookComponent.self)?.execute(shortcut: .harvest(target: clickedEntity))
+                } catch {
+                    print("error when trying to harvest: \(error)")
+                }
             } else {
-                print("go ?")
+                print("go ? (entity : \(clickedEntity))")
                 go(selectedEntity, to: location)
             }
         } else {
