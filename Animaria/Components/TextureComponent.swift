@@ -63,9 +63,14 @@ extension TextureComponent: GKAgentDelegate {
     }
     
     func agentDidUpdate(_ agent: GKAgent) {
-        if let agent = agent as? GKAgent2D {
-            self.position = agent.position.pointValue
-            self.sprite.zRotation = CGFloat(agent.rotation)
-        }
+        guard let agent = agent as? MoveableComponent,
+            !agent.position.x.isNaN && agent.position.pointValue != self.position else { return }
+
+        print("velocity : \(agent.velocity)")
+        self.position = agent.position.pointValue
+        self.sprite.zRotation = CGFloat(agent.rotation)
+        agent.checkDestination()
+
+        print("position of agent changed : \(agent.position)")
     }
 }

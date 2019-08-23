@@ -75,7 +75,7 @@ class Character: TempletableEntity<CharacterTemplate> {
         self.addComponent(textureComponent)
         self.addComponent(LifeComponent(maxLife: template.maxLife))
         self.addComponent(CampComponent(camp: camp))
-        self.addComponent(MoveableComponent(positionComponent: textureComponent, speed: 300.0, acceleration: 100.0, entityManager: entityManager))
+        self.addComponent(MoveableComponent(positionComponent: textureComponent, speed: 300.0, acceleration: 60.0, entityManager: entityManager))
         let skills = RaceRepository.all.skills(for: template.race)
 
         self.addComponent(SkillBookComponent(templates: skills.subset(filterPath: \SkillTemplate.id, values: template.skillsIds), entityManager: entityManager))
