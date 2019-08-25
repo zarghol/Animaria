@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="14854.2" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14854.2"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
@@ -14,25 +14,44 @@
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
         <customView id="Hz6-mo-xeY">
-            <rect key="frame" x="0.0" y="0.0" width="51" height="60"/>
+            <rect key="frame" x="0.0" y="0.0" width="100" height="114"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jTM-S5-xTc">
-                    <rect key="frame" x="0.0" y="0.0" width="51" height="60"/>
-                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="y32-AN-DRs"/>
+                <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" allowsExpansionToolTips="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jTM-S5-xTc">
+                    <rect key="frame" x="0.0" y="34" width="100" height="80"/>
+                    <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="y32-AN-DRs"/>
                 </imageView>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" textCompletion="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v1P-NF-t6g">
+                    <rect key="frame" x="-2" y="0.0" width="104" height="16"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" alignment="center" title="Skill" usesSingleLineMode="YES" id="xsw-yW-QlO">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <progressIndicator wantsLayer="YES" verticalHuggingPriority="1000" maxValue="100" style="bar" translatesAutoresizingMaskIntoConstraints="NO" id="kCR-Ak-Vh4">
+                    <rect key="frame" x="0.0" y="15" width="100" height="20"/>
+                </progressIndicator>
             </subviews>
             <constraints>
+                <constraint firstItem="v1P-NF-t6g" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="929-B6-tCg"/>
+                <constraint firstAttribute="trailing" secondItem="kCR-Ak-Vh4" secondAttribute="trailing" id="9ul-xM-gRC"/>
+                <constraint firstItem="kCR-Ak-Vh4" firstAttribute="top" secondItem="jTM-S5-xTc" secondAttribute="bottom" id="B4U-Ne-J56"/>
                 <constraint firstAttribute="trailing" secondItem="jTM-S5-xTc" secondAttribute="trailing" id="GG2-aZ-VRo"/>
+                <constraint firstAttribute="bottom" secondItem="v1P-NF-t6g" secondAttribute="bottom" id="Sb1-YW-mPc"/>
+                <constraint firstAttribute="trailing" secondItem="v1P-NF-t6g" secondAttribute="trailing" id="YkJ-ge-gi1"/>
+                <constraint firstItem="v1P-NF-t6g" firstAttribute="top" secondItem="kCR-Ak-Vh4" secondAttribute="bottom" id="hQQ-Pl-304"/>
                 <constraint firstItem="jTM-S5-xTc" firstAttribute="top" secondItem="Hz6-mo-xeY" secondAttribute="top" id="hSj-4t-tIE"/>
-                <constraint firstAttribute="bottom" secondItem="jTM-S5-xTc" secondAttribute="bottom" id="hTw-Xl-sCt"/>
+                <constraint firstItem="kCR-Ak-Vh4" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="hn0-wy-uMr"/>
                 <constraint firstItem="jTM-S5-xTc" firstAttribute="leading" secondItem="Hz6-mo-xeY" secondAttribute="leading" id="owm-ka-Kdq"/>
             </constraints>
-            <point key="canvasLocation" x="138.5" y="148"/>
+            <point key="canvasLocation" x="163" y="175"/>
         </customView>
         <collectionViewItem id="Fd8-u4-VEl" customClass="SkillCell" customModule="Animaria" customModuleProvider="target">
             <connections>
+                <outlet property="experienceBar" destination="kCR-Ak-Vh4" id="EK7-PD-HXp"/>
                 <outlet property="imageView" destination="jTM-S5-xTc" id="ujL-Ef-rv2"/>
+                <outlet property="textField" destination="v1P-NF-t6g" id="fxB-Ak-4NH"/>
                 <outlet property="view" destination="Hz6-mo-xeY" id="XZl-ej-rnM"/>
             </connections>
         </collectionViewItem>

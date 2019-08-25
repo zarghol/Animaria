@@ -9,13 +9,10 @@
 import Cocoa
 
 class SkillCell: NSCollectionViewItem {
-    
-    var image: NSImage? {
-        didSet {
-            self.imageView?.image = self.image
-            print("set imageView image with : \(self.imageView)")
-        }
-    }
+
+    var progressObservation: NSKeyValueObservation?
+
+    @IBOutlet weak var experienceBar: NSProgressIndicator!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,5 +20,11 @@ class SkillCell: NSCollectionViewItem {
         view.wantsLayer = true
         view.layer?.backgroundColor = NSColor.lightGray.cgColor
     }
-    
+
+    func setup(image: NSImage?, name: String, level: Int, progress: Double, progressMax: Double) {
+        self.imageView?.image = image
+        self.textField?.stringValue = "\(name) - \(level)"
+        self.experienceBar?.maxValue = progressMax
+        self.experienceBar?.doubleValue = progress
+    }
 }

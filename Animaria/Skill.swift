@@ -92,7 +92,18 @@ struct SkillTemplate: Decodable {
 class Skill: NSObject {
     let template: SkillTemplate
     var level: Int
-    var experience: Int
+    
+    @objc private(set) var experience: Int {
+        willSet {
+            willChangeValue(forKey: "experience")
+        }
+
+        didSet {
+//            didChangeValue(for: \.experience)
+            didChangeValue(forKey: "experience")
+        }
+    }
+
     var currentTime: Double {
         didSet {
             if let race = self.template.id.race,
@@ -134,15 +145,18 @@ class Skill: NSObject {
 
         super.init()
     }
-    
+
+    var experienceCap: Int {
+        return 100 * level
+    }
+
     func earnExperience() { // Experience component ???
         let x = Int.random(in: 1..<10)
         let randomXP = x * level
-        let cap = 100 * level
-        if experience + randomXP < cap {
+        if experience + randomXP < experienceCap {
             experience += randomXP
         } else {
-            experience = (experience + randomXP) % cap
+            experience = (experience + randomXP) % experienceCap
             level += 1
         }
     }

@@ -76,7 +76,7 @@ class MoveableComponent: GKAgent2D {
     func checkDestination() {
         guard let destination = destination else { return }
         let currentPosition = self.position.pointValue
-        if destination <=> currentPosition <= CGFloat(self.radius * 3) {
+        if destination <=> currentPosition <= CGFloat(self.radius) {
             // destination reached
             self.stopMovement()
         }

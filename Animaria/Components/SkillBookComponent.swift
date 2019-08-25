@@ -215,6 +215,8 @@ class SkillBookComponent: GKComponent {
                     self.currentSkill = nil
                     self.check = nil
                     try self.execute(currentSkill)
+                } else {
+                    print("still not good for target")
                 }
 
             case .harvest:
@@ -229,12 +231,16 @@ class SkillBookComponent: GKComponent {
                 let quantity = 1
                 let harvested = resourceComponent.collect(quantity: quantity)
 
-                do {
-                    try camp.collect(resourceComponent.resourceType, quantity: harvested)
-                    currentSkill.earnExperience()
-                } catch {
-                    print("max resource reached. Stop Collecting")
+                if harvested == 0 {
                     self.stopCurrentSkill()
+                } else {
+                    do {
+                        try camp.collect(resourceComponent.resourceType, quantity: harvested)
+                        currentSkill.earnExperience()
+                    } catch {
+                        print("max resource reached. Stop Collecting")
+                        self.stopCurrentSkill()
+                    }
                 }
 
             case .building:
@@ -324,6 +330,26 @@ extension SkillBookComponent {
 
 import Cocoa
 
+extension SkillCell {
+    func setup(skill: Skill) {
+        self.progressObservation = nil
+
+        self.setup(
+            image: NSImage(named: skill.template.id.rawValue),
+            name: skill.template.name,
+            level: skill.level,
+            progress: Double(skill.experience),
+            progressMax: Double(skill.experienceCap)
+        )
+
+        self.progressObservation = skill.observe(\Skill.experience) { updatedSkill, _ in
+            self.experienceBar.doubleValue = Double(updatedSkill.experience)
+            self.experienceBar.maxValue = Double(updatedSkill.experienceCap)
+            self.textField?.stringValue = "\(updatedSkill.template.name) - \(updatedSkill.level)"
+        }
+    }
+}
+
 extension SkillBookComponent: NSCollectionViewDataSource {
     func collectionView(_ collectionView: NSCollectionView, numberOfItemsInSection section: Int) -> Int {
         return section == 0 ? self.filteredSkills.count : 0
@@ -333,9 +359,14 @@ extension SkillBookComponent: NSCollectionViewDataSource {
         let skill = self.filteredSkills[indexPath.item]
 
         let item = collectionView.makeItem(withIdentifier: NSUserInterfaceItemIdentifier(rawValue: "SkillCell"), for: indexPath)
-        item.imageView?.image = NSImage(named: skill.template.id.rawValue)
 
-        return item
+        guard let cell = item as? SkillCell else {
+            return item
+        }
+
+        cell.setup(skill: skill)
+
+        return cell
     }
 }
 
