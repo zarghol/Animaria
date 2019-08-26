@@ -54,42 +54,52 @@ class ViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let scene = GKScene(fileNamed: "GameScene"),
-              let sceneNode = scene.rootNode as? GameScene else {
-            return
-        }
-        let startPositions = scene.entities
-            .filter { $0.component(ofType: StartPositionComponent.self) != nil }
-            .compactMap { $0.component(ofType: GKSKNodeComponent.self)?.node.position }
+        do {
+            let gen = MapGenerator()
+            let generatedScene = try gen.load(tileCount: 100, tileSize: 125)
+            TextureComponent.minimapRatio = minimapView.frame.size.height / generatedScene.size.height
 
-        TextureComponent.minimapRatio = minimapView.frame.size.height / sceneNode.size.height
-        sceneNode.createMinimap(with: Int(minimapView.frame.size.height), originalMapSize: self.skView.frame.size)
+            generatedScene.createMinimap(
+                with: Int(minimapView.frame.size.height),
+                originalMapSize: self.skView.frame.size
+            )
 
-        self.entityManager = EntityManager(scene: sceneNode, minimapScene: sceneNode.minimapScene)
-        sceneNode.entityManager = self.entityManager
-        sceneNode.startPositions = startPositions
+            self.entityManager = EntityManager(scene: generatedScene, minimapScene: generatedScene.minimapScene)
+            generatedScene.entityManager = self.entityManager
 
-        // Set the scale mode to scale to fit the window
-        sceneNode.scaleMode = .aspectFill
-        
-        // Present the scene
-        if let view = self.skView {
-            view.presentScene(sceneNode)
-            view.ignoresSiblingOrder = true
-        }
+            // Set the scale mode to scale to fit the window
+            generatedScene.scaleMode = .aspectFill
 
-        if let minView = self.minimapView {
-            minView.presentScene(sceneNode.minimapScene)
-        }
-        self.updateInterface()
+            // Present the scene
+            if let view = self.skView {
+                view.presentScene(generatedScene)
+                view.ignoresSiblingOrder = true
+            }
 
-        resourcesObservation = sceneNode.observe(\GameScene.playerCamp.resourcesDidChanges) { (_, _) in
-            print("updateResources")
+            if let minView = self.minimapView {
+                minView.presentScene(generatedScene.minimapScene)
+            }
+            self.updateInterface()
+
+            resourcesObservation = generatedScene.observe(\GameScene.playerCamp.resourcesDidChanges) { (_, _) in
+                self.updateResources()
+            }
             self.updateResources()
-        }
-        self.updateResources()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(updateInterface), name: GameScene.SelectedObjectNotificationName, object: sceneNode)
+            NotificationCenter.default.addObserver(
+                self,
+                selector: #selector(updateInterface),
+                name: GameScene.SelectedObjectNotificationName,
+                object: generatedScene
+            )
+        } catch {
+            print("error at beginning : \(error)")
+        }
+
+//        let startPositions = scene.entities
+//            .filter { $0.component(ofType: StartPositionComponent.self) != nil }
+//            .compactMap { $0.component(ofType: GKSKNodeComponent.self)?.node.position }
+
     }
 
     @objc func updateInterface() {

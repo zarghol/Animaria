@@ -11,25 +11,6 @@ import GameplayKit
 
 infix operator <=>: AdditionPrecedence
 
-extension Int {
-    static func random(in range: Range<Int>? = nil) -> Int {
-        let source = GKRandomSource.sharedRandom()
-        guard let range = range else {
-            return source.nextInt()
-        }
-        guard range.lowerBound >= 0 else {
-            return 0 // throw ??
-        }
-        
-        guard !range.isEmpty else {
-            return range.lowerBound
-        }
-        
-        let interval = range.upperBound - range.lowerBound
-        return source.nextInt(upperBound: interval) + range.lowerBound
-    }
-}
-
 extension SKView {
     open override func scrollWheel(with event: NSEvent) {
         self.scene?.scrollWheel(with: event)
@@ -90,6 +71,13 @@ extension CGSize {
         var newVector = left
         newVector.height /= right
         newVector.width /= right
+        return newVector
+    }
+
+    static func * (left: CGSize, right: CGFloat) -> CGSize {
+        var newVector = left
+        newVector.height *= right
+        newVector.width *= right
         return newVector
     }
 }
