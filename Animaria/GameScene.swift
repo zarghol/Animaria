@@ -34,7 +34,7 @@ class GameScene: SKScene {
         }
     }
     
-    weak var entityManager: EntityManager!
+    var entityManager: EntityManager!
     var waitingSkill: Skill?
 
     var minimapScene: SKScene!
@@ -87,13 +87,6 @@ class GameScene: SKScene {
             component.position = unitStartPosition
         }
         self.entityManager.insert(unit)
-
-        let tryTree = ResourceEntity(resource: .wood, amount: 100, entityManager: entityManager)
-
-        if let component = tryTree.component(ofType: TextureComponent.self) {
-            component.position = CGPoint(x: 6250, y: 6250)
-        }
-        self.entityManager.insert(tryTree)
     }
 
     func updateBorderTracking(on view: NSView) {
@@ -368,11 +361,13 @@ class GameScene: SKScene {
     }
 
     enum TileType: String, CaseIterable {
-        case water, sand, background
+        case water, sand, grass, cobblestone
 
         var color: NSColor {
             switch self {
-            case .background:
+            case .cobblestone:
+                return .gray
+            case .grass:
                 return .green
             case .sand:
                 return .yellow
@@ -380,25 +375,57 @@ class GameScene: SKScene {
                 return .blue
             }
         }
+
+        var name: String {
+            switch self {
+            case .cobblestone:
+                return "Cobblestone"
+            case .grass:
+                return "Grass"
+            case .sand:
+                return "Sand"
+            case .water:
+                return "Water"
+            }
+        }
     }
 
     func determineBackground(for coordinate: CGPoint) -> TileType? {
-        guard let waterNode = self.childNode(withName: "Water") as? SKTileMapNode,
-            let sandNode = self.childNode(withName: "Sand") as? SKTileMapNode,
-            let backgroundNode = self.childNode(withName: "Background") as? SKTileMapNode else {
-                return nil
+        let tileNodes = self.children.compactMap { $0 as? SKTileMapNode }
+        let names: [String] = tileNodes.compactMap {
+            let rowIndex = $0.tileRowIndex(fromPosition: coordinate)
+            let columnIndex = $0.tileColumnIndex(fromPosition: coordinate)
+            let definition = $0.tileDefinition(atColumn: columnIndex, row: rowIndex)
+
+            return definition?.name
         }
 
-        let columnIndex = waterNode.tileColumnIndex(fromPosition: coordinate)
-        let rowIndex = waterNode.tileRowIndex(fromPosition: coordinate)
+        guard !names.isEmpty else {
+            return nil
+        }
 
-        let nodes: [(TileType, SKTileMapNode)] = [(.water, waterNode), (.sand, sandNode), (.background, backgroundNode)]
-        for (type, node) in nodes {
-            if node.tileDefinition(atColumn: columnIndex, row: rowIndex) != nil {
+        let orderedTiles: [TileType] = [.water, .cobblestone, .sand, .grass]
+        for type in orderedTiles {
+            if names.contains(where: { $0.contains(type.name) }) {
                 return type
             }
         }
         return nil
+    }
+}
+
+extension Resource {
+    func canBePlaced(on tile: GameScene.TileType) -> Bool {
+        switch (self, tile) {
+        case (.wood, .grass):
+            return true
+        case (.crystal, .grass), (.crystal, .sand):
+            return true
+        case (.metal, .grass):
+            return true
+        default:
+            return false
+        }
     }
 }
 

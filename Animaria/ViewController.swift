@@ -49,23 +49,21 @@ class ViewController: NSViewController {
     
     // MARK: -
     
-    var entityManager: EntityManager!
+    unowned var entityManager: EntityManager!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         do {
-            let gen = MapGenerator()
-            let generatedScene = try gen.load(tileCount: 100, tileSize: 125)
-            TextureComponent.minimapRatio = minimapView.frame.size.height / generatedScene.size.height
-
-            generatedScene.createMinimap(
-                with: Int(minimapView.frame.size.height),
+            let gen = MapGenerator(configuration: .init(
+                tileCount: 100,
+                tileEdgeSize: 125,
+                minimapHeight: minimapView.frame.size.height,
                 originalMapSize: self.skView.frame.size
-            )
+            ))
+            let generatedScene = try gen.load(map: .sea)
 
-            self.entityManager = EntityManager(scene: generatedScene, minimapScene: generatedScene.minimapScene)
-            generatedScene.entityManager = self.entityManager
+            self.entityManager = generatedScene.entityManager
 
             // Set the scale mode to scale to fit the window
             generatedScene.scaleMode = .aspectFill

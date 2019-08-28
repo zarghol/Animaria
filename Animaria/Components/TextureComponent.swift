@@ -34,6 +34,7 @@ class TextureComponent: GKComponent {
         self.sprite = SKSpriteNode(texture: texture, size: size)
         let width = max(size.width * TextureComponent.minimapRatio, 1.5)
         let heigth = max(size.height * TextureComponent.minimapRatio, 1.5)
+        // TODO: change default red
         self.minMapNode = SKSpriteNode(color: .red, size: CGSize(width: width, height: heigth))
         super.init()
     }

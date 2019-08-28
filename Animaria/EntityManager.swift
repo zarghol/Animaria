@@ -29,6 +29,10 @@ class EntityManager {
         self.scene = scene
         self.minimapScene = minimapScene
     }
+
+    func insert(contentsOf entities: Array<GKEntity>) {
+        entities.forEach(self.insert)
+    }
     
     func insert(_ entity: GKEntity) {
         entities.insert(entity)

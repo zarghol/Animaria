@@ -64,7 +64,7 @@ class SkillBookComponent: GKComponent {
 
     var check: SkillBookCheck?
 
-    unowned var entityManager: EntityManager
+    var entityManager: EntityManager
 
     init(templates: [SkillTemplate], entityManager: EntityManager) {
         self.skills = templates.map { Skill(template: $0) }
