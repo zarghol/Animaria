@@ -9,6 +9,30 @@
 import SpriteKit
 import GameplayKit
 
+enum GameError {
+    enum Initialization: Error {
+        case raceNotFound(Race)
+        case resourcesNotInitialized(Error)
+        case buildingTemplateNotAvailable
+        case noStartPositionsFound
+        case cameraNotFound
+        case minimapCameraNotFound
+    }
+
+    enum ComponentsError: Error {
+        case cantGetComponent(GKEntity, GKComponent.Type)
+    }
+}
+
+extension GKEntity {
+    func component<T: GKComponent>(type: T.Type) throws -> T {
+        guard let component = self.component(ofType: type) else {
+            throw GameError.ComponentsError.cantGetComponent(self, type)
+        }
+        return component
+    }
+}
+
 class GameScene: SKScene {
     static let SelectedObjectNotificationName = NSNotification.Name("selectedObject")
     
@@ -44,49 +68,58 @@ class GameScene: SKScene {
 
     @objc weak var playerCamp: Camp!
 
-    func initializeGame() {
-        guard let pandas = RaceRepository.all[.panda] else {
-            return
+    func initializeGame() throws {
+        let race = Race.panda
+        guard let pandas = RaceRepository.all[race] else {
+            throw GameError.Initialization.raceNotFound(race)
         }
         let initialCamp = Camp(id: 0, race: pandas)
         do {
             try initialCamp.collect(.wood, quantity: 100)
             try initialCamp.collect(.metal, quantity: 10)
-            try initialCamp.collect(.crystal, quantity: 5)
+            try initialCamp.collect(.crystal, quantity: 100)
         } catch {
-            print("couldn't initialize resources for camp")
+            throw GameError.Initialization.resourcesNotInitialized(error)
         }
 
         camps.append(initialCamp)
         self.playerCamp = initialCamp
         guard let mainBuilding = initialCamp.templates.availableBuildings.first else {
-            return
+            throw GameError.Initialization.buildingTemplateNotAvailable
         }
 
         let building = Building(template: mainBuilding, camp: initialCamp, isMain: true, entityManager: entityManager)
 
-        let startPosition = self.startPositions.randomElement() ?? CGPoint(x: 6250, y: 6250)
-        self.camera?.position = startPosition
-        if let cameraMinimap = self.minimapScene.childNode(withName: "cameraRect") {
-            let ratio = self.minimapScene.size.height / self.size.height
-            cameraMinimap.position = camera!.position * ratio
+        guard let startPosition = self.startPositions.randomElement() else {
+            throw GameError.Initialization.noStartPositionsFound
         }
 
-        if let component = building.component(ofType: TextureComponent.self) {
-            component.position = startPosition
-        }
+        let buildingTextureComponent = try building.component(type: TextureComponent.self)
+        buildingTextureComponent.position = startPosition
+
         self.entityManager.insert(building)
 
         guard let firstUnit = initialCamp.templates.availableCharacters.first else {
-            return
+            throw GameError.Initialization.buildingTemplateNotAvailable
         }
 
         let unit = Character(template: firstUnit, camp: initialCamp, entityManager: entityManager)
-        if let component = unit.component(ofType: TextureComponent.self) {
-            let unitStartPosition = startPosition.applying(CGAffineTransform(translationX: 20.0, y: 0.0))
-            component.position = unitStartPosition
-        }
+        let unitTextureComponent = try unit.component(type: TextureComponent.self)
+
+        let unitStartPosition = startPosition.applying(CGAffineTransform(translationX: 0.0, y: -buildingTextureComponent.sprite.size.height))
+        unitTextureComponent.position = unitStartPosition
+
         self.entityManager.insert(unit)
+
+        guard let camera = self.camera else {
+            throw GameError.Initialization.cameraNotFound
+        }
+        camera.position = startPosition
+        guard let cameraMinimap = self.minimapScene.childNode(withName: "cameraRect") else {
+            throw GameError.Initialization.minimapCameraNotFound
+        }
+        let ratio = self.minimapScene.size.height / self.size.height
+        cameraMinimap.position = camera.position * ratio
     }
 
     func updateBorderTracking(on view: NSView) {
@@ -139,8 +172,13 @@ class GameScene: SKScene {
     
     override func didMove(to view: SKView) {
         super.didMove(to: view)
-        
-        self.initializeGame()
+
+        do {
+            try self.initializeGame()
+        } catch {
+            self.debugText = "initializing error : \(error)"
+        }
+
         self.updateBorderTracking(on: view)
     }
     

@@ -72,7 +72,7 @@ enum Map {
         case .centeredLake:
             return []
         case .sea:
-            return []
+            return [CGPoint(x: 6820, y: 1848)/*, CGPoint(x: 4022, y: 5438)*/]
         case .twoLakes:
             return []
         }
