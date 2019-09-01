@@ -9,7 +9,7 @@
 import Cocoa
 
 enum DataType: String {
-    case buildings, characters, objects, skills
+    case buildings, characters, objects, skills, titles
 }
 
 protocol DataProvider {

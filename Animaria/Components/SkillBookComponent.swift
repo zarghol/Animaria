@@ -15,6 +15,7 @@ enum SkillError: Error {
     case needTarget
     case invalidTarget
     case skillNotFound
+    case skillNotAvailable
     case skillAlreadyInProgress
 }
 
@@ -56,7 +57,7 @@ enum SkillBookShortcut {
 }
 
 class SkillBookComponent: GKComponent {
-    private let skills: [Skill]
+    let skills: [Skill]
     var currentSkill: Skill?
     var filter: SkillFilter = .all
 
@@ -76,6 +77,10 @@ class SkillBookComponent: GKComponent {
         guard skill.template.id != .base_0 else { // stop
             self.stopCurrentSkill()
             return
+        }
+
+        guard self.checkTitleEligibility(for: skill) else {
+            throw SkillError.skillNotAvailable
         }
 
         guard self.currentSkill == nil else {
@@ -201,6 +206,23 @@ class SkillBookComponent: GKComponent {
         default:
             return false
         }
+    }
+
+    func checkTitleEligibility(for skill: Skill) -> Bool {
+        let titlesToCheck = skill.template.requiredTitles
+        guard !titlesToCheck.isEmpty else {
+            // no title required so ok, successful
+            return true
+        }
+
+        guard let titlesComponent = self.entity?.component(ofType: TitlesComponent.self) else {
+            // a title is required and not titles components ? so failed
+            return false
+        }
+
+        return titlesToCheck.reduce(true, { result, title in
+            return result && titlesComponent.ownedTitles.contains(where: { $0.isAcquired && $0.template.id == title })
+        })
     }
     
     override func update(deltaTime seconds: TimeInterval) {

@@ -84,7 +84,7 @@ struct SkillTemplate: Decodable {
 
     let target: SkillTemplateTarget
     let type: SkillType
-    let requiredTitle: TitleId?
+    let requiredTitles: [TitleId]
     let energyQuantity: Double
     let cooldown: Double
 }

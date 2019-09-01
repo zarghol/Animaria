@@ -79,6 +79,8 @@ class Character: TempletableEntity<CharacterTemplate> {
         let skills = RaceRepository.all.skills(for: template.race)
 
         self.addComponent(SkillBookComponent(templates: skills.subset(filterPath: \SkillTemplate.id, values: template.skillsIds), entityManager: entityManager))
+
+        self.addComponent(TitlesComponent(availableTitles: camp.templates.availableTitles))
     }
 
     required init?(coder aDecoder: NSCoder) {

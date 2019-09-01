@@ -9,7 +9,7 @@
       "unitType": "character",
       "id": 0
     },
-    "requiredTitle": null,
+    "requiredTitles": [],
     "energyQuantity": 0.0,
     "cooldown": 0.0
   },
@@ -26,8 +26,142 @@
       "unitType": "building",
       "id": 0
     },
-    "requiredTitle": null,
+    "requiredTitles": [],
     "energyQuantity": 0.0,
     "cooldown": 0.0
+  },
+  {
+    "id": "panda_2",
+    "name": "Laboratoire",
+    "description": "Construit de faire des recherches scientifiques plus approfondies",
+    "target": {
+      "type": "position",
+      "distance": 50
+    },
+    "type": {
+      "type": "building",
+      "unitType": "building",
+      "id": 1
+    },
+    "requiredTitles": ["panda_title_1", "panda_title_2"],
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
+  },
+  {
+    "id": "panda_3",
+    "name": "Moulin",
+    "description": "Produit des bucherons directement",
+    "target": {
+      "type": "position",
+      "distance": 50
+    },
+    "type": {
+      "type": "building",
+      "unitType": "building",
+      "id": 2
+    },
+    "requiredTitles": ["panda_title_1", "panda_title_4"],
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
+  },
+  {
+    "id": "panda_4",
+    "name": "Baraquement",
+    "description": "Produit des soldats directement",
+    "target": {
+      "type": "position",
+      "distance": 50
+    },
+    "type": {
+      "type": "building",
+      "unitType": "building",
+      "id": 3
+    },
+    "requiredTitles": ["panda_title_1", "panda_title_0"],
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
+  },
+  {
+    "id": "panda_5",
+    "name": "Energistic",
+    "description": "Une tour défensive",
+    "target": {
+      "type": "position",
+      "distance": 50
+    },
+    "type": {
+      "type": "building",
+      "unitType": "building",
+      "id": 4
+    },
+    "requiredTitles": ["panda_title_1"],
+    "energyQuantity": 0.0,
+    "cooldown": 0.0
+  },
+  {
+    "id": "panda_6",
+    "name": "Pouf",
+    "description": "Une attaque de zone",
+    "target": {
+      "type": "entity",
+      "distance": 50
+    },
+    "type": {
+      "type": "direct",
+      "characteristics": {
+        "damages": 11,
+        "range": 0,
+        "zoneSize": 4
+      }
+    },
+    "requiredTitles": ["panda_title_0"],
+    "energyQuantity": 7.0,
+    "cooldown": 60
+  },
+  {
+    "id": "panda_7",
+    "name": "Recherche",
+    "description": "Cherche des nouveautés technologiques",
+    "target": "none",
+    "type": "basic",
+    "requiredTitles": [],
+    "energyQuantity": 4,
+    "cooldown": 50
+  },
+  {
+    "id": "panda_8",
+    "name": "Clonage",
+    "description": "Clone le personnage",
+    "target": {
+      "type": "entity",
+      "distance": 50
+    },
+    "type": {
+      "type": "direct",
+      "characteristics": {}
+    },
+    "requiredTitles": ["panda_title_3"],
+    "energyQuantity": 10,
+    "cooldown": 150
+  },
+  {
+    "id": "panda_9",
+    "name": "Dynamite",
+    "description": "Attaque de zone",
+    "target": {
+      "type": "entity",
+      "distance": 100
+    },
+    "type": {
+      "type": "direct",
+      "characteristics": {
+        "damages": 14,
+        "range": 7,
+        "zoneSize": 2
+      }
+    },
+    "requiredTitles": ["panda_title_2"],
+    "energyQuantity": 10,
+    "cooldown": 80
   }
 ]

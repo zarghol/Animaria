@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		18089B0620BA4F210033D12A /* Title.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18089B0520BA4F210033D12A /* Title.swift */; };
 		18089B0820BA52600033D12A /* SkillBookComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18089B0720BA52600033D12A /* SkillBookComponent.swift */; };
+		181E8EB123197E41008368A8 /* TitlesComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 181E8EB023197E41008368A8 /* TitlesComponent.swift */; };
 		1825878D20BB4E0100E0E1D1 /* DisablingClickBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1825878C20BB4E0100E0E1D1 /* DisablingClickBox.swift */; };
 		1825879020BB60D900E0E1D1 /* SkillCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1825878E20BB60D900E0E1D1 /* SkillCell.swift */; };
 		1825879120BB60D900E0E1D1 /* SkillCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1825878F20BB60D900E0E1D1 /* SkillCell.xib */; };
@@ -65,6 +66,7 @@
 /* Begin PBXFileReference section */
 		18089B0520BA4F210033D12A /* Title.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Title.swift; sourceTree = "<group>"; };
 		18089B0720BA52600033D12A /* SkillBookComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillBookComponent.swift; sourceTree = "<group>"; };
+		181E8EB023197E41008368A8 /* TitlesComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitlesComponent.swift; sourceTree = "<group>"; };
 		1825878C20BB4E0100E0E1D1 /* DisablingClickBox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisablingClickBox.swift; sourceTree = "<group>"; };
 		1825878E20BB60D900E0E1D1 /* SkillCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkillCell.swift; sourceTree = "<group>"; };
 		1825878F20BB60D900E0E1D1 /* SkillCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = SkillCell.xib; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 				182DF2EB20BA372600B8B322 /* StartPositionComponent.swift */,
 				18089B0720BA52600033D12A /* SkillBookComponent.swift */,
 				18CB249720DA754500FFD1D6 /* ResourceComponent.swift */,
+				181E8EB023197E41008368A8 /* TitlesComponent.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -374,6 +377,7 @@
 				18BA455320B9F6F600E56E6F /* TempletableEntity.swift in Sources */,
 				18715A4120B8E04200059D0D /* TextureComponent.swift in Sources */,
 				18BA455720B9FB1B00E56E6F /* LifeComponent.swift in Sources */,
+				181E8EB123197E41008368A8 /* TitlesComponent.swift in Sources */,
 				18BA455120B9DB6700E56E6F /* Building.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

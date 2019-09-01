@@ -1,17 +1,17 @@
 [
   {
     "id": "base_0",
-    "name": "stop",
+    "name": "Stop",
     "description": "arrête l'action en cours.",
     "target": "none",
     "type": "basic",
-    "requiredTitle": null,
+    "requiredTitles": [],
     "energyQuantity": 0.0,
     "cooldown": 0.0
   },
   {
     "id": "base_1",
-    "name": "attaque",
+    "name": "Attaque",
     "description": "attaque la cible.",
     "target": {
       "type": "entity",
@@ -24,20 +24,20 @@
         "range": 1.0
       }
     },
-    "requiredTitle": null,
+    "requiredTitles": [],
     "energyQuantity": 0.0,
     "cooldown": 0.0
   },
   {
     "id": "base_2",
-    "name": "harvest",
+    "name": "Récolte",
     "description": "récolte la ressource désignée.",
     "target": {
       "type": "entity",
       "distance": 50
     },
     "type": "basic",
-    "requiredTitle": null,
+    "requiredTitles": [],
     "energyQuantity": 0.0,
     "cooldown": 0.0
   }

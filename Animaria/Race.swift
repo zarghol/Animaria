@@ -20,6 +20,7 @@ struct LoadedRace {
     let availableCharacters: [CharacterTemplate]
     let buildableObjects: [ObjectTemplate]
     let availableSkills: [SkillTemplate]
+    let availableTitles: [TitleTemplate]
 }
 
 extension LoadedRace {
@@ -28,6 +29,7 @@ extension LoadedRace {
         let charactersData = try provider.getData(for: race, type: .characters)
         let objectsData = try provider.getData(for: race, type: .objects)
         let skillsData = try provider.getData(for: race, type: .skills)
+        let titlesData = try provider.getData(for: race, type: .titles)
         
         let jsonDecoder = JSONDecoder()
         jsonDecoder.userInfo[Race.key] = race
@@ -35,6 +37,7 @@ extension LoadedRace {
         self.availableCharacters = try jsonDecoder.decode([CharacterTemplate].self, from: charactersData)
         self.buildableObjects = try jsonDecoder.decode([ObjectTemplate].self, from: objectsData)
         self.availableSkills = try jsonDecoder.decode([SkillTemplate].self, from: skillsData)
+        self.availableTitles = try jsonDecoder.decode([TitleTemplate].self, from: titlesData)
     }
 }
 

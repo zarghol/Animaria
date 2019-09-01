@@ -1,0 +1,47 @@
+[
+  {
+    "id": "panda_title_0",
+    "name": "Combattant",
+    "description": "Un guerrier relativement expérimenté",
+    "requirement": {
+      "skillId": "base_1",
+      "level": 3
+    }
+  },
+  {
+    "id": "panda_title_1",
+    "name": "Maçon",
+    "description": "Construit les batiments plus efficacement que le panda moyen",
+    "requirement": {
+      "skillId": "panda_1",
+      "level": 2
+    }
+  },
+  {
+    "id": "panda_title_2",
+    "name": "Scientifique",
+    "description": "Etudie la science pour le bien de la race panda !",
+    "requirement": {
+      "skillId": "panda_7",
+      "level": 1
+    }
+  },
+  {
+    "id": "panda_title_3",
+    "name": "Directeur de recherche",
+    "description": "Dirige un pole de recherche",
+    "requirement": {
+      "skillId": "panda_7",
+      "level": 10
+    }
+  },
+  {
+    "id": "panda_title_4",
+    "name": "Moissonneur",
+    "description": "Récolte des ressources plus efficacement",
+    "requirement": {
+      "skillId": "base_2",
+      "level": 5
+    }
+  },
+]

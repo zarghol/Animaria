@@ -19,7 +19,7 @@ enum SkillType: Decodable {
 
     case direct([Characteristic: Double])
     case duration([Characteristic: Double])
-    case building(type: UnitType, id: Int) // ??
+    case building(type: UnitType, id: Int)
     case basic
 
     init(from decoder: Decoder) throws {
@@ -86,6 +86,6 @@ enum ObjectLocation: String {
 extension ObjectLocation: Decodable, Encodable { }
 
 enum Characteristic: String {
-    case damages, armor, strength, intellect, endurance, wisdom, constitution, range, attackSpeed
+    case damages, armor, strength, intellect, endurance, wisdom, constitution, range, attackSpeed, zoneSize
 }
 extension Characteristic: Decodable, Encodable { }
